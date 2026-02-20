@@ -1,0 +1,253 @@
+{
+  "vct": "https://issuer.fakebank.eu/credentials/sca-user/1.0",
+  "name": "FakeBank SUA Credential",
+  "description": "TThis is concrete SUA example type for further analysis",
+  "schema_uri": "https://psd2.webuild.eu/schemas/sua-credential-v1.0.json",
+  "extends": "https://issuer.webuild.eu/sca-user/1.0",
+  "category": "urn:eu:europa:ec:eudi:sua:sca",
+  "transaction_data_types": {
+    "urn:eudi:sca:payment_initiation:berlin_group": {
+      "schema": "urn:eudi:sca:payment:1",
+      "ui_labels_uri" : "https://pay.example.com/ui-localisation-catalogue.json",
+      "claims": [
+        {
+          "path": ["payload", "transaction_id"],
+          "display": [
+            {
+              "locale": "en-US",
+              "label": "Transaction ID"
+            },
+            {
+              "locale": "cs-CZ",
+              "label": "Id transakce"
+            }
+          ]
+        },
+        {
+          "path": ["payload", "amount"],
+          "display": [
+            {
+              "locale": "en-US",
+              "label": "Amount"
+            },
+            {
+              "locale": "cs-CZ",
+              "label": "Částka platby"
+            }
+          ]
+        },
+        {
+          "path": ["payload", "payee", "name"],
+          "display": [
+            {
+              "locale": "en-US",
+              "label": "Payee's name"
+            },
+            {
+              "locale": "cs-CZ",
+              "label": "Název protistrany"
+            }
+          ]
+        }
+      ]
+    },
+    "urn:eudi:sca:payment_initiation:czech_open_banking": {
+      "schema": "urn:eudi:sca:payment:1",
+      "ui_labels_uri" : "https://pay.example.com/ui-localisation-catalogue.json",
+      "claims": [
+        {
+          "path": ["payload", "transaction_id"],
+          "display": [
+            {
+              "locale": "en-US",
+              "label": "Transaction ID"
+            },
+            {
+              "locale": "cs-CZ",
+              "label": "Id transakce"
+            }
+          ]
+        },
+        {
+          "path": ["payload", "amount"],
+          "display": [
+            {
+              "locale": "en-US",
+              "label": "Amount"
+            },
+            {
+              "locale": "cs-CZ",
+              "label": "Částka platby"
+            }
+          ]
+        },
+        {
+          "path": ["payload", "payee", "name"],
+          "display": [
+            {
+              "locale": "en-US",
+              "label": "Payee's name"
+            },
+            {
+              "locale": "cs-CZ",
+              "label": "Název protistrany"
+            }
+          ]
+        }
+      ]
+    },
+    "urn:eudi:sca:payment_initiation:poland_open_banking": {
+      "schema": "urn:eudi:sca:payment:1",
+      "ui_labels_uri" : "https://pay.example.com/ui-localisation-catalogue.json",
+      "claims": [
+        {
+          "path": ["payload", "transaction_id"],
+          "display": [
+            {
+              "locale": "en-US",
+              "label": "Transaction ID"
+            },
+            {
+              "locale": "cs-CZ",
+              "label": "Id transakce"
+            }
+          ]
+        },
+        {
+          "path": ["payload", "amount"],
+          "display": [
+            {
+              "locale": "en-US",
+              "label": "Amount"
+            },
+            {
+              "locale": "cs-CZ",
+              "label": "Částka platby"
+            }
+          ]
+        },
+        {
+          "path": ["payload", "payee", "name"],
+          "display": [
+            {
+              "locale": "en-US",
+              "label": "Payee's name"
+            },
+            {
+              "locale": "cs-CZ",
+              "label": "Název protistrany"
+            }
+          ]
+        }
+      ]
+    },
+    "urn:eudi:sca:login_risk_transaction:cz_banking": {
+      "schema": "urn:eudi:sca:login_risk_transaction:1",
+      "ui_labels_uri" : "https://pay.example.com/ui-localisation-catalogue.json",
+      "claims": [
+        {
+          "path": ["payload", "transaction_id"],
+          "display": [
+            {
+              "locale": "en-US",
+              "label": "Transaction ID"
+            },
+            {
+              "locale": "cs-CZ",
+              "label": "Id transakce"
+            }
+          ]
+        },
+        {
+          "path": ["payload", "service"],
+          "display": [
+            {
+              "locale": "en-US",
+              "label": "Service"
+            },
+            {
+              "locale": "cs-CZ",
+              "label": "Služba"
+            }
+          ]
+        },
+        {
+          "path": ["payload", "action"],
+          "display": [
+            {
+              "locale": "en-US",
+              "label": "Action name"
+            },
+            {
+              "locale": "cs-CZ",
+              "label": "Název akce"
+            }
+          ]
+        }
+      ]
+    }
+
+  },
+  "display": [
+    {
+      "locale": "en-US",
+      "name": "FakeBank SUA Credential",
+      "rendering": {
+        "simple": {
+          "logo": {
+            "uri": "https://fakebank.eu/public/sua-logo.png",
+            "uri#integrity": "sha256-LmXfh+9cLlJNXN+TsMk+PmKjZ5t0WRL5ca/xGgX3c1U=",
+            "alt_text": "WE BUILD SUA Logo"
+          },
+          "background_image": {
+            "uri": "https://fakebank.eu/public/sua-background-logo.png",
+            "uri#integrity": "sha256-5sBT7mMLylHLWrrS/qQ8aHpRAxoraWVmWX6eUVMlrrA="
+          },
+          "background_color": "#12107c",
+          "text_color": "#FFFFFF"
+        },
+        "svg_templates": [
+          {
+            "uri": "https://fakebank.eu/public/payment-logo.svg",
+            "uri#integrity": "sha256-I4JcBGO7UfrkOBrsV7ytNJAfGuKLQh+e+Z31mc7iAb4=",
+            "properties": {
+              "orientation": "landscape",
+              "color_scheme": "light",
+              "contrast": "high"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "locale": "cs-CZ",
+      "name": "FakeBank SUA atestace",
+      "rendering": {
+        "simple": {
+          "logo": {
+            "uri": "https://fakebank.eu/public/sua-logo.png",
+            "uri#integrity": "sha256-LmXfh+9cLlJNXN+TsMk+PmKjZ5t0WRL5ca/xGgX3c1U=",
+            "alt_text": "WE BUILD SUA logo"
+          },
+          "background_image": {
+            "uri": "https://fakebank.eu/public/sua-background-logo.png",
+            "uri#integrity": "sha256-9cLlJNXN+TsMk+PmKjZ5t0WRL5ca/xGgX3c1ULmXfh="
+          },
+          "background_color": "#12107c",
+          "text_color": "#FFFFFF"
+        },
+        "svg_templates": [
+          {
+            "uri": "hhttps://fakebank.eu/public/sua-logo.svg",
+            "uri#integrity": "sha256-I4JcBGO7UfrkOBrsV7ytNJAfGuKLQh+e+Z31mc7iAb4=",
+            "properties": {
+              "orientation": "landscape",
+              "color_scheme": "light",
+              "contrast": "high"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

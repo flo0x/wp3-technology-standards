@@ -1,0 +1,262 @@
+{
+  "vct": "https://issuer.webuild.eu/sca-iban/1.0",
+  "name": "Base IBAN SUA Credential",
+  "description": "TThis is base IBAN SUA metadata example for further analysis",
+  "schema_uri": "https://psd2.webuild.eu/schemas/iban-sua-credential-v1.0.json",
+  "extends": "https://issuer.webuild.eu/sca/1.0",
+  "extends#integrity": "sha256-5sBT7mMLylHLWrrS/qQ8aHpRAxoraWVmWX6eUVMlrrA=",
+  "category": "urn:eu:europa:ec:eudi:sua:sca",
+  "transaction_data_types": {
+    "urn:eudi:sca:payment_initiation:berlin_group": {
+      "schema": "urn:eudi:sca:payment:1",
+      "ui_labels_uri" : "https://pay.example.com/ui-localisation-catalogue.json",
+      "claims": [
+        {
+          "path": ["payload", "transaction_id"],
+          "display": [
+            {
+              "locale": "en-US",
+              "label": "Transaction ID"
+            },
+            {
+              "locale": "cs-CZ",
+              "label": "Id transakce"
+            }
+          ]
+        },
+        {
+          "path": ["payload", "amount"],
+          "display": [
+            {
+              "locale": "en-US",
+              "label": "Amount"
+            },
+            {
+              "locale": "cs-CZ",
+              "label": "Částka platby"
+            }
+          ]
+        },
+        {
+          "path": ["payload", "payee", "name"],
+          "display": [
+            {
+              "locale": "en-US",
+              "label": "Payee's name"
+            },
+            {
+              "locale": "cs-CZ",
+              "label": "Název protistrany"
+            }
+          ]
+        }
+      ]
+    },
+    "urn:eudi:sca:payment_initiation:czech_open_banking": {
+      "schema": "urn:eudi:sca:payment:1",
+      "ui_labels_uri" : "https://pay.example.com/ui-localisation-catalogue.json",
+      "claims": [
+        {
+          "path": ["payload", "transaction_id"],
+          "display": [
+            {
+              "locale": "en-US",
+              "label": "Transaction ID"
+            },
+            {
+              "locale": "cs-CZ",
+              "label": "Id transakce"
+            }
+          ]
+        },
+        {
+          "path": ["payload", "amount"],
+          "display": [
+            {
+              "locale": "en-US",
+              "label": "Amount"
+            },
+            {
+              "locale": "cs-CZ",
+              "label": "Částka platby"
+            }
+          ]
+        },
+        {
+          "path": ["payload", "payee", "name"],
+          "display": [
+            {
+              "locale": "en-US",
+              "label": "Payee's name"
+            },
+            {
+              "locale": "cs-CZ",
+              "label": "Název protistrany"
+            }
+          ]
+        }
+      ]
+    },
+    "urn:eudi:sca:payment_initiation:poland_open_banking": {
+      "schema": "urn:eudi:sca:payment:1",
+      "ui_labels_uri" : "https://pay.example.com/ui-localisation-catalogue.json",
+      "claims": [
+        {
+          "path": ["payload", "transaction_id"],
+          "display": [
+            {
+              "locale": "en-US",
+              "label": "Transaction ID"
+            },
+            {
+              "locale": "cs-CZ",
+              "label": "Id transakce"
+            }
+          ]
+        },
+        {
+          "path": ["payload", "amount"],
+          "display": [
+            {
+              "locale": "en-US",
+              "label": "Amount"
+            },
+            {
+              "locale": "cs-CZ",
+              "label": "Částka platby"
+            }
+          ]
+        },
+        {
+          "path": ["payload", "payee", "name"],
+          "display": [
+            {
+              "locale": "en-US",
+              "label": "Payee's name"
+            },
+            {
+              "locale": "cs-CZ",
+              "label": "Název protistrany"
+            }
+          ]
+        }
+      ]
+    },
+
+  },
+  "display": [
+    {
+      "locale": "en-US",
+      "name": "IBAN Payment Credential",
+      "rendering": {
+        "simple": {
+          "logo": {
+            "uri": "https://psd2.webuild.eu/public/iban-logo.png",
+            "uri#integrity": "sha256-LmXfh+9cLlJNXN+TsMk+PmKjZ5t0WRL5ca/xGgX3c1U=",
+            "alt_text": "WE BUILD IBAN Logo"
+          },
+          "background_image": {
+            "uri": "https://psd2.webuild.eu/public/iban-background-logo.png",
+            "uri#integrity": "sha256-5sBT7mMLylHLWrrS/qQ8aHpRAxoraWVmWX6eUVMlrrA="
+          },
+          "background_color": "#12107c",
+          "text_color": "#FFFFFF"
+        },
+        "svg_templates": [
+          {
+            "uri": "https://psd2.webuild.eu/public/iban-logo.svg",
+            "uri#integrity": "sha256-I4JcBGO7UfrkOBrsV7ytNJAfGuKLQh+e+Z31mc7iAb4=",
+            "properties": {
+              "orientation": "landscape",
+              "color_scheme": "light",
+              "contrast": "high"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "locale": "cs-CZ",
+      "name": "IBAN platební atestace",
+      "rendering": {
+        "simple": {
+          "logo": {
+            "uri": "https://psd2.webuild.eu/public/iban-logo.png",
+            "uri#integrity": "sha256-LmXfh+9cLlJNXN+TsMk+PmKjZ5t0WRL5ca/xGgX3c1U=",
+            "alt_text": "WE BUILD IBAN logo"
+          },
+          "background_image": {
+            "uri": "https://psd2.webuild.eu/public/iban-background-logo.png",
+            "uri#integrity": "sha256-9cLlJNXN+TsMk+PmKjZ5t0WRL5ca/xGgX3c1ULmXfh="
+          },
+          "background_color": "#12107c",
+          "text_color": "#FFFFFF"
+        },
+        "svg_templates": [
+          {
+            "uri": "https://psd2.webuild.eu/public/iban-logo.svg",
+            "uri#integrity": "sha256-I4JcBGO7UfrkOBrsV7ytNJAfGuKLQh+e+Z31mc7iAb4=",
+            "properties": {
+              "orientation": "landscape",
+              "color_scheme": "light",
+              "contrast": "high"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "claims": [
+    {
+      "path": ["iban"],
+      "display": [
+        {
+          "locale": "cs-CZ",
+          "label": "IBAN číslo účtu",
+          "description": "Anonymní dentifikátor uživatele"
+        },
+        {
+          "locale": "en-US",
+          "label": "IBAN number",
+          "description": "Anonymous user's ID"
+        }
+      ],
+      "sd": "always",
+      "mandatory": true
+    },
+    {
+      "path": ["bic"],
+      "display": [
+        {
+          "locale": "cs-CZ",
+          "label": "BIC identifikátor banky",
+          "description": "BIC banky, která vydala IBAN"
+        },
+        {
+          "locale": "en-US",
+          "label": "BIC identifier",
+          "description": "BIC of bank, which issued IBAN"
+        }
+      ],
+      "sd": "always",
+      "mandatory": true
+    },
+    {
+      "path": ["currency"],
+      "display": [
+        {
+          "locale": "cs-CZ",
+          "label": "Měna ůčtu",
+          "description": "Měna, ve které je vedený účet"
+        },
+        {
+          "locale": "en-US",
+          "label": "Currency",
+          "description": "Currency of account"
+        }
+      ],
+      "sd": "always",
+      "mandatory": true
+    }
+  ]
+}
