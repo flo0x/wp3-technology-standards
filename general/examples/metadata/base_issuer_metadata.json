@@ -1,0 +1,14 @@
+{
+  "issuer": "https://issuer.bankid.cz",
+  "jwks" : {
+    "keys": [{
+      "kty": "EC",
+      "use": "sig",
+      "crv": "P-256",
+      "kid": "8juMEHv6wfyGGDE5V5y61GxW9r2--gZu8T_blAE6LvQ",
+      "x": "Vfwu0mqt9PkliqRHsI2Wbqf4pcN-uDgh8gMMUsS9El8",
+      "y": "bUh0HACnD0JMUTYvD3fZEvmNiMWLKzoD2lkv1I8LsEc",
+      "alg": "ES256"
+    }]
+  }
+}

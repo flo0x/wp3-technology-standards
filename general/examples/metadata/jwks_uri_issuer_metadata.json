@@ -1,0 +1,4 @@
+{
+  "issuer":"https://issuer.bankid.cz",
+  "jwks_uri":"https://jwt-vc-issuer.example.com/.well-known/jwks"
+}
