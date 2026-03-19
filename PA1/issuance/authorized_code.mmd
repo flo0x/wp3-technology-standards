@@ -1,0 +1,95 @@
+sequenceDiagram
+    autonumber
+
+    participant User
+    participant Wallet
+    participant Browser
+    participant Issuer
+    participant Bank
+
+    rect rgb(240, 240, 240)
+    Note over User, Bank: Credential Offer
+    end
+
+    activate User
+    User->>Bank: Request Credential from Bank
+    activate Bank
+    Bank->>Bank: Display credential offer
+    deactivate Bank
+    
+    User->>Wallet: Open Wallet
+    activate Wallet
+    Wallet->>Wallet: Scan Credential offer
+    
+    Wallet->>Issuer: .well-known/openid-credential-issuer
+    activate Issuer
+    Issuer-->>Wallet: Credential Issuer metadata
+    deactivate Issuer
+    
+    Wallet->>Issuer: .well-known/openid-configuration
+    Note left of Issuer: For simplicity OAuth Authorization Server is part of issuer,<br/>but in RL may be different.<br/>OAuth request are prefixed by /oauth prefix in URL<br/>URL might also be for oauth authorization metadata URL,<br/>not necessary OpenID.
+    activate Issuer
+    Issuer-->>Wallet: openid server metadata
+    deactivate Issuer
+    
+    Wallet->>Issuer: /oauth/par
+    activate Issuer
+    Issuer-->>Wallet: auth request id
+    deactivate Issuer
+    
+    Wallet->>Issuer: /oauth/auth
+    activate Issuer
+    Issuer-->>Wallet: HTTP 302 to auth page
+    deactivate Issuer
+    
+    Wallet->>Browser: auth page
+    activate Browser
+    Browser->>Issuer: /login
+    activate Issuer
+    Issuer->>Issuer: prepare OpenID4VP request for WUA + PID/SUA
+    Issuer-->>Browser: page with deep link
+    deactivate Issuer
+    
+    Browser-->>Wallet: invoke with presentation request
+    activate Wallet
+    Wallet->>Wallet: process presentation as Deep link flow
+    Wallet-->>Browser: redirect back
+    deactivate Wallet
+    
+    Browser->>Issuer: initate redirect back to Wallet
+    activate Issuer
+    Issuer->>Bank: Send user authorization
+    activate Bank
+    Bank-->>Issuer: OK/NOK
+    deactivate Bank
+    Issuer-->>Browser: redirect to Wallet
+    deactivate Issuer
+    Browser-->>Wallet: Wallet callback with code
+    deactivate Browser
+    
+    Wallet->>Issuer: /oauth/token (optionally with DPoP)
+    activate Issuer
+    Issuer-->>Wallet: Access_token + refresh_token
+    deactivate Issuer
+    
+    Wallet->>Issuer: /nonce
+    activate Issuer
+    Issuer-->>Wallet: fresh nonce
+    deactivate Issuer
+    
+    Wallet->>Issuer: /credential
+    activate Issuer
+    Issuer->>Bank: get credentials data
+    activate Bank
+    Bank-->>Issuer: credentials data
+    deactivate Bank
+    Issuer-->>Wallet: credentials
+    deactivate Issuer
+    
+    Wallet->>Wallet: Display issued credentials
+    User->>Wallet: accept credentials
+    
+    Wallet->>Issuer: /notification (with credential accepted)
+    activate Issuer
+    Issuer-->>Wallet: HTTP 204
+    deactivate Issuer

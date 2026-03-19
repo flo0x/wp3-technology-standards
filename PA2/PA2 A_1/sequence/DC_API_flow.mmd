@@ -1,0 +1,88 @@
+sequenceDiagram
+    autonumber
+    actor User
+    participant Wallet Unit as Wallet Unit
+    participant OS
+    participant Merchant App as Merchant App
+    participant DeviceBrowser
+    participant PISP
+    participant ASPSP
+    participant Issuer
+
+    activate User
+    User->>Merchant App: Pay for order with EUDIW
+    Note right of Merchant App: Assumption is to be on mobile phone
+    activate Merchant App
+    Merchant App->>PISP: Intiate payment
+    activate PISP
+    PISP->>ASPSP: POST /transaction
+    Note right of ASPSP: Regular PSD2 Account-to-account transaction
+    activate ASPSP
+    ASPSP-->>PISP: authorization link
+    deactivate ASPSP
+    PISP-->>Merchant App: authorization link
+    deactivate PISP
+    Merchant App->>DeviceBrowser: Open authorization link
+    activate DeviceBrowser
+    DeviceBrowser->>ASPSP: get transaction to authorize
+    activate ASPSP
+    ASPSP-->>DeviceBrowser: transaction to authorize
+    deactivate ASPSP
+    DeviceBrowser->>DeviceBrowser: Display transaction to authorize
+    User->>DeviceBrowser: Choose EUDIW to authorize
+    DeviceBrowser->>OS: User Agent Allows Protocol Request
+    activate OS
+    OS-->>DeviceBrowser: User Agent Allows Protocol Response
+    deactivate OS
+    Note right of DeviceBrowser: In case User Agent does not support DC API<br/>i.e. Firefox or Linux OS solution should<br/>fallback on QR code or deeplink navigation.<br/>See diagram for deeplink in integration
+
+    DeviceBrowser->>ASPSP: Prepare Openid4VP Request with Payment
+    activate ASPSP
+    ASPSP-->>DeviceBrowser: Signed Openid4VP Request
+    deactivate ASPSP
+    DeviceBrowser->>OS: DC API Openid4VP request
+
+    %% Payment Authorization
+    activate OS
+    Note left of OS: here is simplification,<br/>user may choose "Wallet Unit" with credential,<br/>which they will use,<br/>in case of A.1 it will be SUA attestation
+
+    OS->>OS: Evalute credential eligibility for payment type
+    OS->>OS: Display Payment
+    User->>OS: Confirm presentation
+
+    OS->>Wallet Unit: Invoke with Openid4VP request
+    deactivate OS
+
+    activate Wallet Unit
+    Wallet Unit->>Wallet Unit: Validate DC API Credential request
+    Wallet Unit->>Wallet Unit: Attach transaction data KB-JWT to SUA presentation, create final VP token
+    Wallet Unit->>Wallet Unit: Encrypt with Merchant public key
+    Wallet Unit-->>OS: encrypted response
+    deactivate Wallet Unit
+    activate OS
+
+    OS-->>DeviceBrowser: DC API credential response
+    deactivate OS
+
+    DeviceBrowser->>ASPSP: POST /response with encrypted vptoken
+    Note left of ASPSP: Not standardised, depends on merchant integration patterns
+    activate ASPSP
+    ASPSP->>ASPSP: decrypt and validate vptoken
+    ASPSP-->>DeviceBrowser: result
+    deactivate ASPSP
+    destroy DeviceBrowser
+    DeviceBrowser-->>DeviceBrowser: Close browser
+
+    loop check transaction status
+        Merchant App->>PISP: Get transaction status
+        activate PISP
+        PISP->>ASPSP: get transaction status
+        activate ASPSP
+        ASPSP-->>PISP: transaction status (NOT FINISHED, OK, NOT )
+        deactivate ASPSP
+        PISP-->>Merchant App: transaction status (NOT FINISHED, OK, NOT )
+        deactivate PISP
+        opt transaction OK/NOK
+            Merchant App->>Merchant App: Display payment confirmation/refusal
+        end
+    end

@@ -34,7 +34,7 @@ sequenceDiagram
     Note left of OS/Browser: here is simplification,<br/>user may choose "Wallet Unit" with credential,<br/>which they will use, in case of A.2 it should be IBAN as SUA attestation
 
     OS/Browser->>OS/Browser: Evaluate credential eligibility for payment type
-    OS/Browser->>OS/Browser: Display Payment
+    OS/Browser->>OS/Browser: Display Payment with ability to change Payment Credential
     User->>OS/Browser: Confirm Payment & authenticate for SUA key
     OS/Browser->>Wallet Unit: Invoke with Openid4VP request
     deactivate OS/Browser

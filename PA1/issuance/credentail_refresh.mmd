@@ -1,0 +1,39 @@
+sequenceDiagram
+    autonumber
+    participant User
+    participant Wallet
+    participant Browser
+    participant Issuer
+    participant Bank
+
+    loop Periodic attestation validity check
+        activate Wallet
+        Wallet->>Wallet: Check attestation validity
+        
+        opt attestation is invalid and can be refreshed
+            Wallet->>Issuer: /token with DPoP, and refresh_token grant
+            activate Issuer
+            Issuer-->>Wallet: AT and new RT
+            deactivate Issuer
+            
+            Wallet->>Issuer: /credential with new AT
+            activate Issuer
+            Issuer->>Bank: Get credential data
+            activate Bank
+            Bank-->>Issuer: credentail data
+            deactivate Bank
+            Issuer-->>Wallet: issued new credentais
+            deactivate Issuer
+            
+            Wallet->>Issuer: notify credentials accepted
+            activate Issuer
+            Issuer-->>Wallet: HTTP 204
+            deactivate Issuer
+        end
+        
+        opt attestation cannot be refreshed
+            Wallet->>User: Notify credential expired
+            Note over User, Bank: New Credential issuance
+        end
+        deactivate Wallet
+    end

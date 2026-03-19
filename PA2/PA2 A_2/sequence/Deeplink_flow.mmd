@@ -63,10 +63,10 @@ sequenceDiagram
             Bank-->>Wallet Unit: vct metadata
             deactivate Bank
         end
-        Wallet Unit->>Wallet Unit: Evalute credential eligibility for payment type
+        Wallet Unit->>Wallet Unit: Evaluate credential eligibility for payment type
     end
 
-    Wallet Unit->>Wallet Unit: Display Payment
+    Wallet Unit->>Wallet Unit: Display Payment with ability to change Payment Credential
     User->>Wallet Unit: Confirm Payment & authenticate for SUA key
     Wallet Unit->>Wallet Unit: Attach transaction data KB-JWT to SUA presentation, create final VP token
     Wallet Unit->>Wallet Unit: Encrypt with PISP public key
