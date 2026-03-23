@@ -1,0 +1,114 @@
+sequenceDiagram
+    autonumber
+    actor User
+    participant Wallet Unit as Wallet Unit
+    participant OS
+    participant DeviceBrowser
+    participant Merchant App as Merchant App
+    participant PISP
+    participant ASPSP
+
+    activate User
+    User->>Merchant App: Pay for order with EUDIW
+    Note right of Merchant App: Assumption is to be on mobile phone
+    activate Merchant App
+    Merchant App->>PISP: Intiate payment
+    activate PISP
+    PISP->>ASPSP: POST /transaction
+    Note right of ASPSP: Regular PSD2 Account-to-account transaction
+    activate ASPSP
+    ASPSP-->>PISP: authorization link
+    deactivate ASPSP
+    PISP-->>Merchant App: authorization link
+    deactivate PISP
+
+    activate DeviceBrowser
+    DeviceBrowser->>ASPSP: get transaction to authorize
+    activate ASPSP
+    ASPSP-->>DeviceBrowser: transaction to authorize
+    deactivate ASPSP
+    DeviceBrowser->>DeviceBrowser: Display transaction to authorize
+    User->>DeviceBrowser: Choose EUDIW to authorize
+
+    opt check for DC API support
+        DeviceBrowser->>OS: User Agent Allows Protocol Request
+        activate OS
+        OS-->>DeviceBrowser: User Agent Allows Protocol Response
+        deactivate OS
+        Note right of DeviceBrowser: This is case that ASPSP or User Agent does not support DC API
+    end
+
+    %% Payment Authorization
+    DeviceBrowser->>ASPSP: Prepare Request URI with payment data
+    activate ASPSP
+    ASPSP-->>DeviceBrowser: Request URI
+    deactivate ASPSP
+    DeviceBrowser->>DeviceBrowser: Display QR code with deeplink
+
+    alt scan QR code (cross device)
+        User->>Wallet Unit: Open camera
+        Wallet Unit-->>DeviceBrowser: Scan QR code with camera
+        Wallet Unit->>Wallet Unit: Process scaned request
+    else click on deeplink
+        User->>DeviceBrowser: Click on deeplink QR code
+        activate DeviceBrowser
+        DeviceBrowser->>OS: Open deeplink
+        deactivate DeviceBrowser
+        activate OS
+        opt More Wallets in OS
+            User->>OS: Choose "Wallet Unit"
+        end
+        OS->>Wallet Unit: Invoke with Openid4VP request
+        deactivate OS
+    end
+
+    activate Wallet Unit
+    Wallet Unit->>ASPSP: POST /par (with Wallet Metadata)
+    Note left of ASPSP: We instigate that merchant will use<br/>only reference to Request Object<br/>and Request data will be downloaded<br/>from ASPSP server see<br/>5.10. Request URI Method POST in OpenID4VP
+    activate ASPSP
+    ASPSP-->>Wallet Unit: OpenID4VP encrypted request
+    deactivate ASPSP
+
+    Wallet Unit->>Wallet Unit: Decrypt and validate credential request
+
+    opt vct metadata cache empty
+        loop vct in payment credentials
+            Wallet Unit->>Issuer: Get SD-JWT vct metadata
+            activate Issuer
+            Issuer-->>Wallet Unit: vct metadata
+            deactivate Issuer
+        end
+        Wallet Unit->>Wallet Unit: Evalute credential eligibility for payment type
+    end
+
+    Wallet Unit->>Wallet Unit: Display Payment
+    User->>Wallet Unit: Confirm Payment & authenticate for SUA key
+    Wallet Unit->>Wallet Unit: Attach transaction data KB-JWT to SUA presentation, create final VP token
+    Wallet Unit->>Wallet Unit: Encrypt with Merchant public key
+    Wallet Unit->>ASPSP: /POST response_uri from request
+    Note left of ASPSP: Direct_post.jwt with signed and encrypted response must be used,<br/>also validation on response domain given request by Merchant
+    activate ASPSP
+    ASPSP-->>Wallet Unit: deeplink redirect to "Merchant App"
+    deactivate ASPSP
+
+    Wallet Unit->>OS: redirect back to DeviceBrowser
+    activate OS
+    OS-->>DeviceBrowser: redirect back
+    deactivate OS
+
+    destroy DeviceBrowser
+    DeviceBrowser-->>DeviceBrowser: redirect to app or closer browser
+
+    loop check transaction status
+        Merchant App->>PISP: Get transaction status
+        activate PISP
+        PISP->>ASPSP: get transaction status
+        activate ASPSP
+        ASPSP-->>PISP: transaction status (NOT FINISHED, OK, NOT )
+        deactivate ASPSP
+        PISP-->>Merchant App: transaction status (NOT FINISHED, OK, NOT )
+        deactivate PISP
+        opt transaction OK/NOK
+            Merchant App->>Merchant App: Display payment confirmation/refusal
+        end
+    end

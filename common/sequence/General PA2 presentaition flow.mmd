@@ -1,0 +1,29 @@
+sequenceDiagram
+    autonumber
+    actor User
+    participant Wallet Unit as Wallet Unit
+    participant OS/Browser as OS/Browser
+    participant RP App as RP App
+    participant RP BE as RP BE
+
+    activate User
+    User->>RP App: Pay for order with EUDIW
+    activate RP App
+
+    RP App->>OS/Browser: User Agent Allows Protocol Request
+    activate OS/Browser
+    OS/Browser-->>RP App: User Agent Allows Protocol Response
+    deactivate OS/Browser
+    Note right of RP App: In case User Agent does not support DC API<br/>i.e. Firefox or Linux OS solution should<br/>fallback on QR code or deeplink navigation.
+
+    rect rgb(240, 240, 240)
+    Note over User, RP BE: Payment Authorization
+    end
+
+    alt DC API available
+        Note over User, RP BE: DC API flow
+    else DC API not available
+        Note over User, RP BE: Deeplink flow
+    end
+    deactivate RP App
+    deactivate User

@@ -50,7 +50,7 @@ Focuses on the **Presentation** phase and the interaction between the EUDI Walle
   - `attestations/`: Examples of **Signed User Allegations (SUA)** for IBAN and other financial attributes.
   - `sequence/`: Diagrams for proximity-based interactions (e.g., NFC/BLE) and API flows.
 
-### [general/](./general)
+### [general/](common)
 Contains common assets, shared diagrams, and reusable implementation examples.
 - `examples/`:
   - `attestation/`: Example attestations in **SD-JWT** and **W3C VC** formats (e.g., IBAN attestations).

@@ -1,0 +1,75 @@
+sequenceDiagram
+    autonumber
+    actor User
+    participant Wallet Unit as Wallet Unit
+    participant OS/Browser as OS/Browser
+    participant MerchantApp
+    participant PISP
+    participant ASPSP
+    participant Bank
+
+    activate User
+    User->>MerchantApp: Pay for order with EUDIW
+    activate MerchantApp
+    MerchantApp->>OS/Browser: User Agent Allows Protocol Request
+    activate OS/Browser
+    OS/Browser-->>MerchantApp: User Agent Allows Protocol Response
+    deactivate OS/Browser
+    Note right of MerchantApp: In case User Agent does not support DC API<br/>i.e. Firefox or Linux OS solution should<br/>fallback on QR code or deeplink navigation.<br/>See diagram for deeplink in integration
+
+    MerchantApp->>PISP: Prepare payment
+    activate PISP
+    Note left of PISP: Berlin Group assumes that transaction<br/>is first created at ASPSP berfore authorization<br/>This is changed for Wallet flow.
+    PISP-->>MerchantApp: OK
+    deactivate PISP
+
+    MerchantApp->>PISP: Prepare Request
+    activate PISP
+    PISP-->>MerchantApp: Request
+    deactivate PISP
+    MerchantApp->>OS/Browser: DC API Openid4VP request
+
+    %% Payment Authorization
+    activate OS/Browser
+    Note left of OS/Browser: here is simplification,<br/>user may choose "Wallet Unit" with credential,<br/>which they will use, in case of A.2 it should be IBAN as SUA attestation
+
+    OS/Browser->>OS/Browser: Evaluate credential eligibility for payment type
+    OS/Browser->>OS/Browser: Display Payment with ability to change Payment Credential
+    User->>OS/Browser: Confirm Payment & authenticate for SUA key
+    OS/Browser->>Wallet Unit: Invoke with Openid4VP request
+    deactivate OS/Browser
+
+    activate Wallet Unit
+    Wallet Unit->>Wallet Unit: Validate credential request
+    Wallet Unit->>Wallet Unit: Attach transaction data KB-JWT to SUA presentation, create final VP token
+    Wallet Unit->>Wallet Unit: Encrypt with PISP public key
+    Wallet Unit-->>OS/Browser: encrypted response
+    deactivate Wallet Unit
+    activate OS/Browser
+
+    OS/Browser-->>MerchantApp: DC API response
+    deactivate OS/Browser
+
+    MerchantApp->>PISP: POST /response with encrypted vptoken
+    Note left of PISP: Not standardised, depends on merchant integration patterns
+
+    %% Payment initiation
+    activate PISP
+    PISP->>PISP: decrypt and validate vptoken
+    PISP->>ASPSP: PSD2 Open Banking Signed Payment Request
+    activate ASPSP
+    ASPSP-->>PISP: OK/NOK
+    deactivate ASPSP
+    PISP-->>MerchantApp: trx id
+    deactivate PISP
+
+    loop poll trx status
+        MerchantApp->>PISP: Get payment status
+        activate PISP
+        PISP->>ASPSP: Get payment status
+        activate ASPSP
+        ASPSP-->>PISP: processing/executed/declined
+        deactivate ASPSP
+        PISP-->>MerchantApp: processing/executed/declined
+        deactivate PISP
+    end

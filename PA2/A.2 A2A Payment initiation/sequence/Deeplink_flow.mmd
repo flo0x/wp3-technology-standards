@@ -1,0 +1,105 @@
+sequenceDiagram
+    autonumber
+    actor User
+    participant Wallet Unit as Wallet Unit
+    participant OS/Browser as OS/Browser
+    participant MerchantApp
+    participant PISP
+    participant ASPSP
+    participant Bank
+
+    activate User
+    User->>MerchantApp: Pay for order with EUDIW
+    activate MerchantApp
+    MerchantApp->>OS/Browser: User Agent Allows Protocol Request
+    activate OS/Browser
+    OS/Browser-->>MerchantApp: User Agent Allows Protocol Response
+    deactivate OS/Browser
+    MerchantApp->>PISP: Prepare payment
+    activate PISP
+    Note left of PISP: Berlin Group assumes that transaction<br/>is first created at ASPSP berfore authorization<br/>This might be changed for Wallet flow.
+    PISP-->>MerchantApp: OK
+    deactivate PISP
+
+    %% Payment Authorization
+    Note right of MerchantApp: In case User Agent does not support DC API<br/>i.e. Firefox or Linux OS solution should<br/>fallback on QR code or deeplink navigation.<br/>See diagram for DC API
+
+    MerchantApp->>PISP: Prepare Request URI
+    activate PISP
+    PISP-->>MerchantApp: Request URI
+    deactivate PISP
+    MerchantApp->>MerchantApp: Display QR code with deeplink
+    deactivate MerchantApp
+
+    alt scan QR code (cross device)
+        User->>Wallet Unit: Open camera
+        Wallet Unit-->>MerchantApp: Scan QR code with camera
+        Wallet Unit->>Wallet Unit: Process scaned request
+    else click on deeplink
+        User->>MerchantApp: Click on deeplink QR code
+        activate MerchantApp
+        MerchantApp->>OS/Browser: Open deeplink
+        deactivate MerchantApp
+        activate OS/Browser
+        opt More Wallets in OS
+            User->>OS/Browser: Choose "Wallet Unit"
+        end
+        OS/Browser->>Wallet Unit: Invoke with Openid4VP request
+        deactivate OS/Browser
+    end
+
+    activate Wallet Unit
+    Wallet Unit->>PISP: POST /par (with Wallet Metadata)
+    Note left of PISP: We instigate that merchant will use<br/>only reference to Request Object<br/>and Request data will be downloaded<br/>from PISP server see<br/>5.10. Request URI Method POST in OpenID4VP
+    activate PISP
+    PISP-->>Wallet Unit: OpenID4VP encrypted request
+    deactivate PISP
+    Wallet Unit->>Wallet Unit: Decrypt and validate credential request
+
+    opt vct metadata cache empty
+        loop vct in payment credentials
+            Wallet Unit->>Bank: Get SD-JWT vct metadata
+            activate Bank
+            Bank-->>Wallet Unit: vct metadata
+            deactivate Bank
+        end
+        Wallet Unit->>Wallet Unit: Evaluate credential eligibility for payment type
+    end
+
+    Wallet Unit->>Wallet Unit: Display Payment with ability to change Payment Credential
+    User->>Wallet Unit: Confirm Payment & authenticate for SUA key
+    Wallet Unit->>Wallet Unit: Attach transaction data KB-JWT to SUA presentation, create final VP token
+    Wallet Unit->>Wallet Unit: Encrypt with PISP public key
+    Wallet Unit->>PISP: /POST response_uri from request
+    Note left of PISP: Direct_post.jwt with signed and encrypted response must be used,<br/>also validation on response domain given request by Merchant
+    activate PISP
+    PISP-->>Wallet Unit: deeplink redirect to MerchantApp
+    deactivate PISP
+
+    Wallet Unit->>OS/Browser: Deeplink redirect to MerchantApp
+    activate OS/Browser
+    OS/Browser-->>MerchantApp: Invoke MerchantApp with redirect
+    deactivate OS/Browser
+    activate MerchantApp
+    MerchantApp->>MerchantApp: Continue with merchant flow
+
+    %% Payment initiation
+    activate PISP
+    PISP->>PISP: decrypt and validate vptoken
+    PISP->>ASPSP: PSD2 Open Banking Signed Payment Request
+    activate ASPSP
+    ASPSP-->>PISP: OK/NOK
+    deactivate ASPSP
+    PISP-->>MerchantApp: trx id
+    deactivate PISP
+
+    loop poll trx status
+        MerchantApp->>PISP: Get payment status
+        activate PISP
+        PISP->>ASPSP: Get payment status
+        activate ASPSP
+        ASPSP-->>PISP: processing/executed/declined
+        deactivate ASPSP
+        PISP-->>MerchantApp: processing/executed/declined
+        deactivate PISP
+    end
