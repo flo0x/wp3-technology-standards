@@ -1,0 +1,63 @@
+sequenceDiagram
+    participant Seller_Bank
+    participant Seller_Wallet
+    participant Portal
+    participant Buyer_Wallet
+    participant Buyer_VerifSystem
+    participant PSP
+    participant Buyer_Bank
+    participant Buyer_EUDIWallet
+
+
+    critical Send e-Invoice
+    option Directly
+        Seller_Wallet->>+ Buyer_Wallet: Send e-invoice attestation (+evidence)
+    option over Portal
+        Seller_Wallet->>+ Portal: Send e-envoice data     
+        Portal->>+ Portal: Generates e-invoice and verifies integrity
+        Portal->>+ Buyer_Wallet: Send e-invoice
+    end
+
+    Buyer_Wallet->>+ Buyer_VerifSystem : notify the verification of the invoice
+    Buyer_VerifSystem->>+Buyer_VerifSystem: validates the e-invoice    
+    
+    critical Choice of payment
+    option IBAN
+        Buyer_VerifSystem->>+Buyer_VerifSystem: initiate the payment 
+        Buyer_VerifSystem->>+Buyer_Bank: fill the payment 
+    option Card
+        Buyer_VerifSystem->>+PSP: initiate the payment 
+        PSP ->>+Buyer_Bank : fill the payment  
+    end
+    
+    Buyer_Bank->>+Buyer_Bank: analse choice of payment
+
+    critical CardPayment or Risk-Tx or Other
+    option CardPayment 
+        Buyer_Bank<<-->>Buyer_EUDIWallet: requests SCA
+        Buyer_Bank->>+Buyer_Bank: approves SCA 
+    option Risk-Tx (with SCA req)
+        Buyer_Bank<<-->>Buyer_EUDIWallet: requests SCA
+        Buyer_Bank->>+Buyer_Bank: approves SCA
+    option Other
+        Buyer_Bank->>+Buyer_Bank: approves tx
+    end 
+    Buyer_Bank<<->>Seller_Bank: sends transaction 
+
+    critical Choice of payment
+    option IBAN
+        Buyer_Bank->>+Buyer_VerifSystem : send payment confirmation
+        Buyer_VerifSystem->>+Buyer_VerifSystem: reconciliation e-Invoice
+    option Card
+        Buyer_Bank->>+PSP : send payment confirmation
+        PSP->>+PSP :reconciliate e-Invoice
+    end
+
+    Seller_Bank->>+ Seller_Wallet: Sends payment confirmation
+    critical Send e-receipt
+    option Directly
+        Seller_Wallet->>+ Buyer_Wallet: Sends e-reciept for e-Invoice
+    option over Portal
+        Seller_Wallet->>+ Portal: Sends e-reciept for e-Invoice
+        Portal->>+ Buyer_Wallet: Sends e-reciept for e-Invoice
+    end

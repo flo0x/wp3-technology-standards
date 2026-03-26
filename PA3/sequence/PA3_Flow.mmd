@@ -1,0 +1,16 @@
+sequenceDiagram
+    actor Initiator
+    participant Initiator_EUDIWallet
+    participant Company_Wallet
+    participant Bank_System
+    participant Bank_Wallet
+
+Initiator ->>+Bank_System: Trigger open business account & provide the required information (eubw endpoint)
+Bank_System<<->>Bank_Wallet: generate request to identity initiator(PID)
+Bank_System->>+Initiator: Request PID (qrcode)
+Initiator->>+Initiator_EUDIWallet: Scan the code
+Initiator->>+Initiator_EUDIWallet: mutual auth ( auth. certificate)
+Initiator_EUDIWallet->Bank_System : send the pid information
+Bank_System<<->>Bank_Wallet: PID verification
+
+
