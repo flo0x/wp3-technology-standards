@@ -21,17 +21,16 @@ sequenceDiagram
     Bank_System<<->>Company_Wallet: mutual authentification ( exchange EBW OID & EUCC )
     Bank_System<<->>Bank_Wallet: verification of EBW OID & EUCC(rulebook )
 
-    opt national cases: Initiator is not a legal repr - in EUCC 
+    opt national cases and initiator is not a legal repr (not in EUCC)
         Bank_System<<->>Bank_Wallet: generate request for EU POA 
         Bank_System<<->>Company_Wallet: request & present EU PoA
         Bank_System<<->>Bank_Wallet: verification of EU POA  (rulebook )
         Bank_System<<->>Bank_Wallet: context validation of EU PoA (scope validation)
     end
 
-    opt cross boarder cases: Initiator must to register in the national registers
-        Bank_System<<->>Bank_Wallet: generate request for PoR for initiator
-        Bank_System<<->>Company_Wallet: request & present PoR
-        Bank_System<<->>Bank_Wallet: verification of PoR (rulebook )
+    opt cross boarder cases
+        Note right of Bank_System:  Important: registration in the national registers
+        Note right of Bank_System:  TODO Florin fill the idea of PoR = (EU POA + evidence + <br/>registration in the national register)
     end
 
     Bank_System<<->>Bank_Wallet: generate request for: TAX, VAT, CompanyInfo)
@@ -47,27 +46,21 @@ sequenceDiagram
     Bank_System<<->>Bank_Wallet: verification of attestations (rulebook)
 
     Note right of Bank_System: Perform UBO Calculation based on the OwnerShip/ControlList<br/>Cross-Check Against EUCC list and in case of discrepancies report <br/> Cross-Check Against Presented UBO List and in case of discrepancies inform<br/> Cross-Check Against UBO List from Transparency Register and in case of discrepancies report 
+    Note right of Bank_System: TODO Florin describe process in detail from rulebook - verification part
 
     critical UBO Verification
         Bank_System<<->>Bank_System: Start UBO Identity Verification
-    option type_of_identity_document available & ubo online(PID)
+    option type_of_identity_document available & ubo online & type=PID
         Bank_System<<->>Bank_Wallet: generate request for PID
         Bank_System<<->>UBOs: request & present PID
         Bank_System<<->>Bank_Wallet: verification of PID (rulebook verication)
         Bank_System<<->>Bank_System: verification PID data against UBO data 
-    option type_of_identity_document available & ubo offline(PoA)
-        Bank_System<<->>Bank_Wallet: generate request for PoA
-        Bank_System<<->>Company_Wallet: request&present PoA (QEAA)
-        Bank_System<<->>Bank_Wallet: verification of PoA 
-        Bank_System<<->>Bank_Wallet: verification of PoA Evidence against UBO data
-    option type_of_identity_document available & ubo online (mDoc, pass-ICAO-future)
-        Bank_System<<->>Bank_Wallet: generate request for mDOC
-        Bank_System<<->>UBOs: request & present mdoc / pass
-        Bank_System<<->>Bank_Wallet: verification of mdoc/pass (rulebook verication)
-        Bank_System<<->>Bank_System: verification mdoc/pass data against UBO data 
-    option unique_personal_identification_number available & ubo offline
-        Bank_System<<->>Bank_System: check the national database
-        Bank_System<<->>Bank_System: verification identificaion data against UBO data 
+    option type_of_identity_document available & ubo offline
+        Note right of Bank_System:  TODO Florin fill the idea of PoA (EU PoA + evidence) from BU4
+    option type_of_identity_document available & ubo online &type=mDoc, pass-ICAO (future)
+        Note right of Bank_System:  TODO Florin how to validate the (mDoc, pass-ICAO-future)
+    option unique_personal_identification_number available
+        Note right of Bank_System: TODO Florin specify how to make the verif based on the national solution
     option other & ubo online
         Bank_System<<->>UBOs: VideoIdent - process
     end 
@@ -77,36 +70,17 @@ sequenceDiagram
         Bank_System<<->>Company_Wallet:  request & present 
         Bank_System<<->>Bank_Wallet: verification of SignatoryRights (rulebooks verification )
 
-        critical SignatoryRights - Verification 
-        Bank_System<<->>Bank_System : for each person in the signatory rights atestation
-        option Person is not a legal repr. (EUCC)
-            Bank_System<<->>Bank_Wallet: generate request for verification of the person 
-            Bank_System<<->>Company_Wallet: request & present PoA(type: QEAA) 
-            Bank_System<<->>Bank_Wallet: validate the PoA(rulebooks verification )
-            Bank_System<<->>Bank_Wallet: verification of PoA Evidence against SignatoryRights
-        end
+        Note right of Bank_System:  TODO SignatoryRights - Verification for persons in SR and not in EUCC (PoA?)
     end  
 
     critical MVP+
-        opt enhanced due diligence required 
-            Bank_System<<->>Bank_Wallet: generate request for enhanced due diligence
-            Bank_System<<->>Company_Wallet:  request & present 
-            Bank_System<<->>Bank_Wallet: validate the EDD (rulebooks verification )
-        end
-        opt sanction,pep,fraud check required
-            Bank_System<<->>Bank_Wallet: generate request for basic sanction list TFS 
-            Bank_System<<->>Company_Wallet:  request & present 
-            Bank_System<<->>Bank_Wallet: validate the TFS (rulebooks verification )
-        end
-        opt identification of sources required
-            Bank_System<<->>Bank_Wallet: generate request for SoW
-            Bank_System<<->>Company_Wallet:  request & present 
-            Bank_System<<->>Bank_Wallet: validate the SoW (rulebooks verification )
-        end
+        Note right of Bank_System: TOPO specify the EDD, TFS and SoW attestations
     end
 
     Bank_System<<->>Bank_System: cross check over all attestations
-    Bank_System<<->>Bank_System: sign the contract 
+    Note right of Bank_System: todo specify exact what will be cross check
+
+    Bank_System<<->>Bank_System: Scenario2 starts - sign the contract 
 
 
 
