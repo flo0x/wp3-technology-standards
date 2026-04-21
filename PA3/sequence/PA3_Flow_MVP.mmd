@@ -3,7 +3,6 @@ sequenceDiagram
     actor UBOs
     participant EUDIWallet_Initiator
     participant Company_Wallet
-    participant Company_Wallet_API@{ "type": "boundary" } as Company_EUBW_EndPoint
     participant Bank_System
     participant Bank_Wallet
     participant Bank_InternalSystem
@@ -41,9 +40,9 @@ sequenceDiagram
     Bank_System<<->>Bank_Wallet: generate request for KYC: EBWOID & EUCC,TAX, VAT, CompanyInfo, ContactPerson
     critical
     option Automatically (EUBW support end-points)
-        Bank_System->>+Company_Wallet_API: request presentations
-        Company_Wallet_API<<->>Company_Wallet: check the request authorization (automatically acceptance)
-        Company_Wallet_API->>Bank_System: present the attestations
+        Bank_System->>+Company_Wallet: request presentations
+        Company_Wallet<<->>Company_Wallet: check the request authorization (automatically acceptance)
+        Company_Wallet->>Bank_System: present the attestations
     option Manually ( EUBW or EUDI Wallet)
         Bank_System->>Bank_System: embed request into QRCode and provide a DeepLink for the request
         Initiator->>+Company_Wallet: copy/paste deep-link presentation into the company wallet or scan the QRCode
@@ -58,9 +57,9 @@ sequenceDiagram
 
     critical
     option Automatically (EUBW support end-points)
-        Bank_System->>+Company_Wallet_API: request presentations
-        Company_Wallet_API<<->>Company_Wallet: check the request authorization (automatically acceptance)
-        Company_Wallet_API->>Bank_System: present the attestations
+        Bank_System->>+Company_Wallet: request presentations
+        Company_Wallet<<->>Company_Wallet: check the request authorization (automatically acceptance)
+        Company_Wallet->>Bank_System: present the attestations
     option Manually ( EUBW or EUDI Wallet)
         Bank_System->>Bank_System: embed request into QRCode and provide a DeepLink for the request
         Initiator->>+Company_Wallet: copy/paste deep-link presentation into the company wallet or scan the QRCode
@@ -73,9 +72,9 @@ sequenceDiagram
     Bank_System<<->>Bank_Wallet: generate request for UBOList (TR)
     critical
     option Automatically (EUBW support end-points)
-        Bank_System->>+Company_Wallet_API: request presentations
-        Company_Wallet_API<<->>Company_Wallet: check the request authorization (automatically acceptance)
-        Company_Wallet_API->>Bank_System: present the attestations
+        Bank_System->>+Company_Wallet: request presentations
+        Company_Wallet<<->>Company_Wallet: check the request authorization (automatically acceptance)
+        Company_Wallet->>Bank_System: present the attestations
     option Manually ( EUBW or EUDI Wallet)
         Bank_System->>Bank_System: embed request into QRCode and provide a DeepLink for the request
         Initiator->>+Company_Wallet: copy/paste deep-link presentation into the company wallet or scan the QRCode
@@ -90,12 +89,12 @@ sequenceDiagram
 
     Note over Initiator,Bank_Wallet: UBO Verification
     Bank_System<<->>Bank_System: Start UBO Identity Verification for each UBO in the list
-    Bank_System<<->>Initiator: generate link and send it
+    Bank_System->>Initiator: generate link and send it
     critical
     option for each ubo person in the list
-        UBO->>Bank_System: open the link
+        UBOs->>Bank_System: open the link
         Bank_System<<->>Bank_Wallet: generate request for PID and embed into QRCode
-        UBOs->>+Ubos: scan the code and present the PID
+        UBOs->>UBOs: scan the code using the own wallet and present the PID
         Bank_System<<->>Bank_Wallet: verification of PID (rulebook verication)
         Bank_System<<->>Bank_System: verification PID data against UBO data
     end
