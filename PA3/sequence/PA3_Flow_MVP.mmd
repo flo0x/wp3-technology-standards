@@ -13,18 +13,18 @@ sequenceDiagram
 
     Initiator->>+Bank_System: Select option - open business account
     critical LegalEntity Selection
-    option 1.Support_EUBW_Directory_List
+    option Option1.Support_EUBW_Directory_List
         Bank_System->>+Bank_System : Provide the list of available legal entities
         Initiator->>+Bank_System: select the legal entity from the list & the respective wallet address
         Bank_System->>+Bank_System: resolve the endpoint of selected legal entity
-    option 2.Support_EndPoint (address or endpoint URI)
+    option Option2.Support_EndPoint (address or endpoint URI)
         Bank_System->>+Bank_System : Provide an input field
         Initiator->>+Bank_System: fill the address or end-point of the business wallet
         Bank_System->>+Bank_System: resolve the endpoint of the address
-    option 3.Support directly into EUBW
+    option Option3.Support directly into EUBW
         Initiator->>+Company_Wallet: Select bank in the EUBW (configured in wallet)
-    option 4. Other: manual process (EUBW or EUDI Wallet)
-        Note over Initiator: manuall proces by the initiator
+    option Option4. Other: manual process (EUBW or EUDI Wallet)
+        Note over Company_Wallet: manuall proces by the initiator
     end
     Initiator->>+Bank_System: trigger process
 
@@ -36,8 +36,8 @@ sequenceDiagram
     EUDIWallet_Initiator->Bank_System : send the pid information
     Bank_System<<->>Bank_Wallet: verification of PID  (rulebook)
 
-    Note over Initiator,Bank_Wallet: LegalEntity Identification (pubEAA)
-    Bank_System<<->>Bank_Wallet: generate request for KYC: EBWOID & EUCC,TAX, VAT, CompanyInfo, ContactPerson
+    Note over Initiator,Bank_Wallet: LegalEntity Identification
+    Bank_System<<->>Bank_Wallet: generate request for EBWOID, EUCC,TAX, VAT, CompanyInfo, ContactPerson
     critical
     option Automatically (EUBW support end-points)
         Bank_System->>+Company_Wallet: request presentations
@@ -52,7 +52,7 @@ sequenceDiagram
     Bank_System<<->>Bank_Wallet: verification of attestations rulebooks
     Bank_System<<->>Bank_System: Optional: check if the legal repr. is part of the EUCC
 
-    Note over Initiator,Bank_Wallet: Addtionally KYC information (QEAA / EAAs)
+    Note over Initiator,Bank_Wallet: Addtionally KYC information
     Bank_System<<->>Bank_Wallet: generate request for OwnershipList, Controllist, UBOList, SignatoryRights
 
     critical
@@ -68,7 +68,7 @@ sequenceDiagram
     end
     Bank_System<<->>Bank_Wallet: verification of attestations (rulebook)
 
-    Note over Initiator,Bank_Wallet: Additionally KYC information from Transparency Register (as pubEAA)
+    Note over Initiator,Bank_Wallet: Additionally KYC information from Transparency Register
     Bank_System<<->>Bank_Wallet: generate request for UBOList (TR)
     critical
     option Automatically (EUBW support end-points)
@@ -96,7 +96,7 @@ sequenceDiagram
         Bank_System<<->>Bank_Wallet: generate request for PID and embed into QRCode
         UBOs->>UBOs: scan the code using the own wallet and present the PID
         Bank_System<<->>Bank_Wallet: verification of PID (rulebook verication)
-        Bank_System<<->>Bank_System: verification PID data against UBO data
+        Bank_System<<->>Bank_System: additionally verification PID data against UBO data
     end
 
     Bank_System<<->>Bank_System: cross check over all attestations
