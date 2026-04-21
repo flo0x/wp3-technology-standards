@@ -3,93 +3,107 @@ sequenceDiagram
     actor UBOs
     participant EUDIWallet_Initiator
     participant Company_Wallet
+    participant Company_Wallet_API@{ "type": "boundary" } as Company_EUBW_EndPoint
     participant Bank_System
     participant Bank_Wallet
+    participant Bank_InternalSystem
 
     activate Initiator
-    Initiator ->>+Bank_System: Trigger open business account & provide the required information (eubw endpoint)
-    Bank_System<<->>Bank_Wallet: generate request to identity initiator(PID)
-    Bank_System->>+Initiator: Request PID (qrcode)
-    Initiator->>+EUDIWallet_Initiator: Scan the code
-    Initiator->>+EUDIWallet_Initiator: mutual auth ( auth. certificate)
+
+    Note over Initiator,Bank_Wallet: Scenario 1
+
+    Initiator->>+Bank_System: Select option - open business account
+    critical LegalEntity Selection
+    option 1.Support_EUBW_Directory_List
+        Bank_System->>+Bank_System : Provide the list of available legal entities
+        Initiator->>+Bank_System: select the legal entity from the list & the respective wallet address
+        Bank_System->>+Bank_System: resolve the endpoint of selected legal entity
+    option 2.Support_EndPoint (address or endpoint URI)
+        Bank_System->>+Bank_System : Provide an input field
+        Initiator->>+Bank_System: fill the address or end-point of the business wallet
+        Bank_System->>+Bank_System: resolve the endpoint of the address
+    option 3.Support directly into EUBW
+        Initiator->>+Company_Wallet: Select bank in the EUBW (configured in wallet)
+    option 4. Other: manual process (EUBW or EUDI Wallet)
+        Note over Initiator: manuall proces by the initiator
+    end
+    Initiator->>+Bank_System: trigger process
+
+    Note over Initiator,Bank_Wallet: Initiator Identification
+    Bank_System<<->>Bank_Wallet: generate request to identity initiator (PID)
+    Bank_System->>+Bank_Wallet: embed request into QRCode
+    Initiator->>+EUDIWallet_Initiator : Scan the code
+    Initiator->>+EUDIWallet_Initiator : mutual auth ( over auth. certificate)
     EUDIWallet_Initiator->Bank_System : send the pid information
     Bank_System<<->>Bank_Wallet: verification of PID  (rulebook)
 
-    Bank_System<<->>Bank_Wallet: generate request for EBWOID&EUCC
-    Bank_System->>+Company_Wallet:  request legal entity identification 
-    Company_Wallet->>+Company_Wallet: check the request authorization 
-    Bank_System<<->>Company_Wallet: mutual authentification ( exchange EBW OID & EUCC )
-    Bank_System<<->>Bank_Wallet: verification of EBW OID & EUCC(rulebook )
-
-    opt national cases and initiator is not a legal repr (not in EUCC)
-        Bank_System<<->>Bank_Wallet: generate request for EU POA 
-        Bank_System<<->>Company_Wallet: request & present EU PoA
-        Bank_System<<->>Bank_Wallet: verification of EU POA  (rulebook )
-        Bank_System<<->>Bank_Wallet: context validation of EU PoA (scope validation)
+    Note over Initiator,Bank_Wallet: LegalEntity Identification (pubEAA)
+    Bank_System<<->>Bank_Wallet: generate request for KYC: EBWOID & EUCC,TAX, VAT, CompanyInfo, ContactPerson
+    critical
+    option Automatically (EUBW support end-points)
+        Bank_System->>+Company_Wallet_API: request presentations
+        Company_Wallet_API<<->>Company_Wallet: check the request authorization (automatically acceptance)
+        Company_Wallet_API->>Bank_System: present the attestations
+    option Manually ( EUBW or EUDI Wallet)
+        Bank_System->>Bank_System: embed request into QRCode and provide a DeepLink for the request
+        Initiator->>+Company_Wallet: copy/paste deep-link presentation into the company wallet or scan the QRCode
+        Company_Wallet->>+Company_Wallet: check the request authorization (manual process)
+        Company_Wallet->>Bank_System: present the attestations
     end
+    Bank_System<<->>Bank_Wallet: verification of attestations rulebooks
+    Bank_System<<->>Bank_System: Optional: check if the legal repr. is part of the EUCC
 
-    opt cross boarder cases
-        Note right of Bank_System:  Important: registration in the national registers
-        Note right of Bank_System:  TODO Florin fill the idea of PoR = (EU POA + evidence + <br/>registration in the national register)
+    Note over Initiator,Bank_Wallet: Addtionally KYC information (QEAA / EAAs)
+    Bank_System<<->>Bank_Wallet: generate request for OwnershipList, Controllist, UBOList, SignatoryRights
+
+    critical
+    option Automatically (EUBW support end-points)
+        Bank_System->>+Company_Wallet_API: request presentations
+        Company_Wallet_API<<->>Company_Wallet: check the request authorization (automatically acceptance)
+        Company_Wallet_API->>Bank_System: present the attestations
+    option Manually ( EUBW or EUDI Wallet)
+        Bank_System->>Bank_System: embed request into QRCode and provide a DeepLink for the request
+        Initiator->>+Company_Wallet: copy/paste deep-link presentation into the company wallet or scan the QRCode
+        Company_Wallet->>+Company_Wallet: check the request authorization (manual process)
+        Company_Wallet->>Bank_System: present the attestations
     end
-
-    Bank_System<<->>Bank_Wallet: generate request for: TAX, VAT, CompanyInfo)
-    Bank_System<<->>Company_Wallet:  request & present attestations
     Bank_System<<->>Bank_Wallet: verification of attestations (rulebook)
 
-    Bank_System<<->>Bank_Wallet: generate request for OwnershipList,Controllist
-    Bank_System<<->>Company_Wallet:  request & present attestations
+    Note over Initiator,Bank_Wallet: Additionally KYC information from Transparency Register (as pubEAA)
+    Bank_System<<->>Bank_Wallet: generate request for UBOList (TR)
+    critical
+    option Automatically (EUBW support end-points)
+        Bank_System->>+Company_Wallet_API: request presentations
+        Company_Wallet_API<<->>Company_Wallet: check the request authorization (automatically acceptance)
+        Company_Wallet_API->>Bank_System: present the attestations
+    option Manually ( EUBW or EUDI Wallet)
+        Bank_System->>Bank_System: embed request into QRCode and provide a DeepLink for the request
+        Initiator->>+Company_Wallet: copy/paste deep-link presentation into the company wallet or scan the QRCode
+        Company_Wallet->>+Company_Wallet: check the request authorization (manual process)
+        Company_Wallet->>Bank_System: present the attestations
+    end
     Bank_System<<->>Bank_Wallet: verification of attestations (rulebook)
 
-    Bank_System<<->>Bank_Wallet: generate request for add. info: UBOList
-    Bank_System<<->>Company_Wallet:  request & present attestations
-    Bank_System<<->>Bank_Wallet: verification of attestations (rulebook)
+    Note right of Bank_System: Perform UBO Calculation based on the OwnerShip/ControlList <br/> Cross-Check Against Presented UBO List  in case of discrepancies inform<br/> Cross-Check Against UBO List from Transparency Register , in case of discrepancies report
+    Bank_System->>Bank_System: compare the UBO Lists
+    Bank_System->>Bank_System: in case discrepancy with the UBOList(TR) report it
 
-    Note right of Bank_System: Perform UBO Calculation based on the OwnerShip/ControlList<br/>Cross-Check Against EUCC list and in case of discrepancies report <br/> Cross-Check Against Presented UBO List and in case of discrepancies inform<br/> Cross-Check Against UBO List from Transparency Register and in case of discrepancies report 
-    Note right of Bank_System: TODO Florin describe process in detail from rulebook - verification part
-
-    critical UBO Verification
-        Bank_System<<->>Bank_System: Start UBO Identity Verification
-    option type_of_identity_document available & ubo online & type=PID
-        Bank_System<<->>Bank_Wallet: generate request for PID
-        Bank_System<<->>UBOs: request & present PID
+    Note over Initiator,Bank_Wallet: UBO Verification
+    Bank_System<<->>Bank_System: Start UBO Identity Verification for each UBO in the list
+    Bank_System<<->>Initiator: generate link and send it
+    critical
+    option for each ubo person in the list
+        UBO->>Bank_System: open the link
+        Bank_System<<->>Bank_Wallet: generate request for PID and embed into QRCode
+        UBOs->>+Ubos: scan the code and present the PID
         Bank_System<<->>Bank_Wallet: verification of PID (rulebook verication)
-        Bank_System<<->>Bank_System: verification PID data against UBO data 
-    option type_of_identity_document available & ubo offline
-        Note right of Bank_System:  TODO Florin fill the idea of PoA (EU PoA + evidence) from BU4
-    option type_of_identity_document available & ubo online &type=mDoc, pass-ICAO (future)
-        Note right of Bank_System:  TODO Florin how to validate the (mDoc, pass-ICAO-future)
-    option unique_personal_identification_number available
-        Note right of Bank_System: TODO Florin specify how to make the verif based on the national solution
-    option other & ubo online
-        Bank_System<<->>UBOs: VideoIdent - process
-    end 
-
-    opt SignatoryRights exchange
-        Bank_System<<->>Bank_Wallet: generate request for signatory rights attestation 
-        Bank_System<<->>Company_Wallet:  request & present 
-        Bank_System<<->>Bank_Wallet: verification of SignatoryRights (rulebooks verification )
-
-        Note right of Bank_System:  TODO SignatoryRights - Verification for persons in SR and not in EUCC (PoA?)
-    end  
-
-    critical MVP+
-        Note right of Bank_System: TOPO specify the EDD, TFS and SoW attestations
+        Bank_System<<->>Bank_System: verification PID data against UBO data
     end
 
     Bank_System<<->>Bank_System: cross check over all attestations
-    Note right of Bank_System: todo specify exact what will be cross check
+    Bank_System->>+Bank_InternalSystem: transfer data to internal system
 
-    Bank_System<<->>Bank_System: Scenario2 starts - sign the contract 
-
-
+    Note over Initiator,Bank_Wallet: Scenario2 (contract signing)
 
 
-
-
-
-
-
-
-
-
+    Note over Initiator,Bank_Wallet: Scenario3 (IBAN Issuing)
