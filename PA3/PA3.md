@@ -32,6 +32,10 @@ sequenceDiagram
 ::include{file=block1.puml}
 ```
 
+## Paragraph
+{% include 'block1.mmd' %}
+
+
 @import "block1.puml"
 @import "block1.mmd"
 
