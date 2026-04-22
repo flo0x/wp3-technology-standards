@@ -18,7 +18,7 @@
 ## 1 Introduction
 bla bla
 
-### 1.1. Company 
+### 1.1. Scenario1
 
 ```mermaid
 sequenceDiagram
@@ -27,19 +27,7 @@ sequenceDiagram
     Initiator ->>+Bank_Portal : Selects "Open Business Account" service
 ```
 
-
-```plantuml
-::include{file=block1.puml}
-```
-
 ## Paragraph
-{% include 'block1.mmd' %}
+{% include 'https://github.com/flo0x/wp3-technology-standards/blob/main/PA3/block1.mmd' %}
 
-
-@import "block1.puml"
-@import "block1.mmd"
-
-
-@import "[block1.mmd](https://github.com/flo0x/wp3-technology-standards/blob/main/PA3/block1.mmd)"{class="mermaid"}
-
-@import "test.png" {width="300px" height="200px" title="my title" alt="my alt"}
+#include "https://github.com/flo0x/wp3-technology-standards/blob/main/PA3/block1.mmd"
