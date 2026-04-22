@@ -27,6 +27,11 @@ sequenceDiagram
     Initiator ->>+Bank_Portal : Selects "Open Business Account" service
 ```
 
+```plantuml
+::include{file=block1.mmd}
+```
+
+
 @import "block1.mmd"{class="mermaid"}
 
 @import "test.png" {width="300px" height="200px" title="my title" alt="my alt"}
