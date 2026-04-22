@@ -27,6 +27,6 @@ sequenceDiagram
     Initiator ->>+Bank_Portal : Selects "Open Business Account" service
 ```
 
-@import "block1.mmd"{class="mermaid"}
+@import "[block1.mmd](https://github.com/flo0x/wp3-technology-standards/blob/main/PA3/block1.mmd)"{class="mermaid"}
 
 @import "test.png" {width="300px" height="200px" title="my title" alt="my alt"}
