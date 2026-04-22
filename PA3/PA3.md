@@ -26,8 +26,12 @@ sequenceDiagram
     participant Bank_Portal
     Initiator ->>+Bank_Portal : Selects "Open Business Account" service
 ```
-@Import "block1.mmd"
 
-include ./block1.mmd
+
+mermaid {% include block1.mmd %}
+
+
+
+
 
 
