@@ -29,7 +29,7 @@ sequenceDiagram
 
 
 ```plantuml
-::include{file=block1.mmd}
+::include{file=block1.puml}
 ```
 
 @import "[block1.mmd](https://github.com/flo0x/wp3-technology-standards/blob/main/PA3/block1.mmd)"{class="mermaid"}
