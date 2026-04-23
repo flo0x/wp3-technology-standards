@@ -125,10 +125,10 @@ sequenceDiagram
             Note over Person,Bank_Wallet: This case will be handled in the MVP+
         end
     Bank_Portal<<->>Bank_Wallet: verification of attestations (rulebook)
-```
 
     Note right of Bank_Portal: UBO Calculation is not part of the MVP. This is an internal process
     Bank_Portal->>Bank_Portal: UBO List will be automatically accepted.
+```
 
 ### 1.5. UBOList from Transparency Register
 
