@@ -43,7 +43,8 @@ sequenceDiagram
     end
 
     Note over Initiator,Bank_Wallet: Scenario 1.LegalEntity Identification
-    Bank_Portal<<->>Bank_Wallet: generate request for EBWOID, EUCC,TAX, VAT, CompanyInfo, ContactPerson
+    Bank_Portal<<->>Bank_Wallet: generate proof-request
+    Bank_Portal<<->>Bank_Wallet: EBWOID, EUCC,TAX, VAT,CompanyInfo, ContactPerson
     critical
     option Automatically (EUBW support end-points)
         Bank_Portal->>+Company_Wallet: request presentations
@@ -61,7 +62,8 @@ sequenceDiagram
     Note over EUDIWallet: assumption the Initiator is a legal representive, if not this will be part of MVP+
 
     Note over Initiator,Bank_Wallet: Scenario 1. Addtionally KYC information
-    Bank_Portal<<->>Bank_Wallet: generate request for OwnershipList, Controllist, UBOList, SignatoryRights
+    Bank_Portal<<->>Bank_Wallet: generate proof-request
+    Bank_Portal<<->>Bank_Wallet: OwnershipList,Controllist,UBOList,SignatoryRights
     critical
     option Automatically (EUBW support end-points)
         Bank_Portal->>+Company_Wallet: request presentations
