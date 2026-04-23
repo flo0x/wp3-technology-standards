@@ -41,7 +41,7 @@ sequenceDiagram
         EUDIWallet_Initiator->Bank_Portal : send the pid information
         Bank_Portal<<->>Bank_Wallet: verification of PID  (rulebook)
     option Option2.Other identification
-        Note over Initiator: identification of the person with other identfication means (ex. eID)
+        Note over EUDIWallet_Initiator: identification of the person with other identfication means (ex. eID)
     end
 
     Note over Initiator,Bank_Wallet: Scenario 1.LegalEntity Identification
@@ -60,7 +60,7 @@ sequenceDiagram
         Company_Wallet->>Bank_Portal: present the attestations
     end
     Bank_Portal<<->>Bank_Wallet: verification of attestations rulebooks
-    Note over Initiator: assumption the Initiator is a legal representive, if not this will be part of MVP+
+    Note over EUDIWallet_Initiator: assumption the Initiator is a legal representive, if not this will be part of MVP+
 
     Note over Initiator,Bank_Wallet: Scenario 1. Addtionally KYC information
     Bank_Portal<<->>Bank_Wallet: generate request for OwnershipList, Controllist, UBOList, SignatoryRights
@@ -142,7 +142,7 @@ sequenceDiagram
     end
     Bank_Wallet->>+Bank_Wallet: verifies collected attestations
     Bank_Wallet->>+Bank_Wallet: verifies QES
-    Bank_Portal<<->>+InternalSystem : create the account
+    Bank_Portal<<->>+Bank_InternalSystem : create the account
     Bank_Portal<<->>Bank_Portal: Display success notification ( account created)
 
     Note over Initiator,Bank_Wallet: Scenario3 (IBAN Issuing)
