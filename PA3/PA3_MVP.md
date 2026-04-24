@@ -3,7 +3,8 @@
 MVP Restrictions:
 
 ## Company Perspective
-- The account initiator is the sole legal representative, who is also the UBO and contact person for the bank relationship (one-person GmbH in Germany, covering SME-cases).
+- The person who initiated the account opening process is also: legal representative, UBO and contact person (to make it simple: 4 positions in 1; one-person GmbH in Germany, covering SME-cases)”
+- The initiator is the sole legal representative, who is also the UBO and contact person for the bank relationship (one-person GmbH in Germany, covering SME-cases).
 - Means: No additional persons with signatory rights are required  
 - The company is authorized to present attestations and receive attestations (no configuration support)
 - The company is not a branch.
@@ -11,7 +12,7 @@ MVP Restrictions:
 - The MVP process (Scenario 1-3) is executed sequentially by one person 
 
 ## Bank perspective
-- The company is not classified as high risk (no sanctions screening is required).
+- The company who wants to open a bank account will be classified as low/medium risk client. It will be no high-risk client (therefore, e.g.: no sanction screening, PEP-screening etc. is required)
 - The bank supports cross-border account opening and no registration in the national register for the initiator/account holder is required.
 Info: If other banks participate in the MVP, this can be extended to include the POR attestation.
 - UBO calculation is an internal process and is not part of the MVP or MVP+.
