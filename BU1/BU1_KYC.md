@@ -38,7 +38,7 @@ sequenceDiagram
     end
     
     Company ->> Company: issue VAT, CompanyInfo, ContactPerson
-    SocialSecurityIssue->>->> Company: issue SocialSecurity attestation 
+    SocialSecurityIssuer->> Company: issue SocialSecurity attestation 
         
     Note over Source, Company_Wallet: part of the MVP++
     Company ->> Company: issue OwnershipList,ControlList
