@@ -1,6 +1,6 @@
 # BU1 KYS MVP Workflow
 
-MVP Restrictions:
+1) MVP Restrictions:
 ## Supplier/Holder Perspective
 - Any person can trigger the process of supplier onboarding
 - The Mutual authentication is set to default true (no TLOL or device-binding checks are applied).
@@ -9,13 +9,13 @@ MVP Restrictions:
 ## Customer/RelyingParty Perspective 
 - The supplier will be classified as low/medium risk supplier. It will be no high-risk supplier  (therefore, e.g.: no sanction screening is required)
 
-MVP+ Extension:
+2) MVP+ Extension:
 ## Supplier perspective
 - Additionally support for the KYS sanction validation 
 - Additionally support for the ESG Certificates 
 
 ## Pre-requisites
-This are the pre-requisites for the company in order to run the MVP and MVP+
+1) This are the pre-requisites for the company in order to run the MVP and MVP+
 
 ```mermaid
 sequenceDiagram
@@ -46,12 +46,14 @@ sequenceDiagram
     participant GS1
     GS1 ->> Supplier: issue GS1 
     Supplier ->> Supplier: issue OwnershipList,ControlList
-    
-    Note over Auth.Source ,RelyingParty: required for MVP+   
+```
+
+2) This are the additionally pre-requisites for the company in order to run the MVP+
+```mermaid
+sequenceDiagram
     Auth.Source ->> Supplier: issue TFS
     Supplier ->> Supplier: issue ESG (as EAA, QEAA - in clarification)    
 ```
-
 ### 1. Scenario KYC 
 
 ### 1.1. Legal Entity Selection

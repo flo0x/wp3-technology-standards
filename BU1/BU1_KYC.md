@@ -1,6 +1,6 @@
 # BU1 KYC_KYS MVP Workflow
 
-MVP Restrictions:
+1) MVP Restrictions:
 ## Seller/Holder Perspective
 - Any person can trigger the process of customer onboarding
 - The company is authorized to present attestations and receive attestations (no configuration support)
@@ -10,12 +10,12 @@ MVP Restrictions:
 ## Buyer/RelyingParty Perspective 
 - The seller will be classified as low/medium risk customer. It will be no high-risk customer  (therefore, e.g.: no sanction screening is required)
 
-MVP+ Extension:
+2) MVP+ Extension:
 ## Seller Perspective
 - Additionally support for the KYC sanction validation
 
 ## Pre-requisites
-This are the pre-requisites for the company in order to run the MVP and MVP+
+1) This are the pre-requisites for the company in order to run the MVP 
 
 ```mermaid
 sequenceDiagram
@@ -24,7 +24,6 @@ sequenceDiagram
     participant TAX_Administration 
     participant Seller
     participant Buyer
-    participant SocialSecurityIssuer
 
     Auth.Source ->> Seller : issue EBWOID  
     Auth.Source ->> Seller : issue EUCC
@@ -37,10 +36,14 @@ sequenceDiagram
     end
     
     Seller ->> Seller: issue VAT, CompanyInfo, ContactPerson
-    SocialSecurityIssuer->> Seller: issue SocialSecurityAttestation 
     Seller ->> Seller: issue OwnershipList,ControlList
-            
-    Note over Auth.Source ,Buyer: required for MVP+   
+```
+
+2) This are the additionally pre-requisites for the company in order to run the MVP+
+```mermaid
+sequenceDiagram
+    participant SocialSecurityIssuer
+    SocialSecurityIssuer->> Seller: issue SocialSecurityAttestation 
     Auth.Source ->> Seller: issue TFS
 ```
 
@@ -52,14 +55,13 @@ sequenceDiagram
     actor Initiator
     activate Initiator
     Initiator->>+Buyer_Portal: Select "start customer onboarding" Service
-    Initiator->>+Buyer_Portal: Fill the required contact information 
     alt Wallet_Support_EndPoint (ex. Resolvable eAddress or public endpoint URI)
         Buyer_Portal->>+Buyer_Portal : Provide an input field
         Initiator->>+Buyer_Portal: fill the address or end-point of the business wallet
         Buyer_Portal->>+Buyer_Portal: resolve eAddress
     else Support directly into EUBW  
-        Note over Seller_Wallet: the company wallet already integrate the business process of specific buyer
-        Initiator->>+Seller_Wallet: Select RP in the EUBW (configured in wallet)
+        Note over Seller_Wallet: the supplier wallet already integrate the business process for specific buyer
+        Initiator->>+Seller_Wallet: Select Buyer in the EUBW (configured in wallet)
     else Other: manual process (EUBW or EUDI Wallet)
         Note over Seller_Wallet: manuall proces by the Initiator
     end
@@ -91,7 +93,7 @@ sequenceDiagram
 sequenceDiagram
     actor Initiator
     Buyer_Portal<<->>Buyer_Wallet: generate proof-request
-    Buyer_Portal<<->>Buyer_Wallet: for CompanyInfo, ContactPerson, ( SocialSecurityAttestation )
+    Buyer_Portal<<->>Buyer_Wallet: for CompanyInfo, ContactPerson
     alt Automatically (EUBW support end-points)
         Buyer_Portal->>+Seller_Wallet: request presentations
     else Manually ( EUBW or EUDI Wallet)
@@ -122,13 +124,12 @@ sequenceDiagram
     Buyer_Portal<<->>Buyer_Wallet: verification of attestations (rulebook)
 ```
 
-### 1.5. Additionally KYS Information - relevant in Screening process (this will be handled in the MVP+)
+### 1.5. Additionally KYC Screening Information (this will be handled in the MVP+)
 ```mermaid
 sequenceDiagram
     actor Initiator
     Buyer_Portal<<->>Buyer_Wallet: generate proof-request
-    Buyer_Portal<<->>Buyer_Wallet: in case that the company required screening : TFS
-    Buyer_Portal<<->>Buyer_Wallet: in case that the company has ESG information :  ESG 
+    Buyer_Portal<<->>Buyer_Wallet: for TFS - Attestation and SocialSecurityAttestation 
     alt Automatically (EUBW support end-points)
         Buyer_Portal->>+Seller_Wallet: request presentations
     else Manually ( EUBW or EUDI Wallet)
