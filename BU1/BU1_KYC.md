@@ -87,20 +87,20 @@ sequenceDiagram
     Seller_Portal<<->>Seller_Wallet: verification of attestations rulebooks
 ```
 
-### 1.3. KYC - Customer Due Diligence - Information  
+### 1.3. KYC - Customer Due Diligence  Information
 ```mermaid
 sequenceDiagram
     actor Initiator
     Seller_Portal<<->>Seller_Wallet: generate proof-request
-    RP_Portal<<->>RP_Wallet: for OwnershipList,ControlList -> only the relevant KYC attributes ( GDPR conform)  
+    Seller_Portal<<->>Seller_Wallet: for OwnershipList,ControlList -> only the relevant KYS attributes ( GDPR conform)  
     alt Automatically (EUBW support end-points)
-        Seller_Portal->>+Buyer_Wallet: request presentations 
+        Seller_Portal->>+Buyer_Wallet: request presentations
     else Manually ( EUBW or EUDI Wallet)
-        Seller_Portal->>Seller_Portal: embed request into QRCode and provide an openid4vp-URI for the request
-        Initiator->>+Buyer_Wallet: copy/paste openid4vp-URI into the company wallet or scan the QRCode
-    end
-    Buyer_Wallet<<->>Buyer_Wallet: mutual authentification ( x509 certificate or eubwoid rulebook)
-    Buyer_Wallet<<->>Buyer_Wallet: check the authorization of requester to present requested attestations (own business configuration)
+        Seller_Portal->>Seller_Portal: embed request into QRCode and provide an openid4vp-URI link for the request
+        Initiator->>+Buyer_Wallet: copy/paste openid4vp-URI link into the company wallet or scan the QRCode
+    end                 
+    Buyer_Wallet<<->>Supplier_Wallet: mutual authentification ( x509 certificate or eubwoid rulebook)
+    Buyer_Wallet<<->>Supplier_Wallet: check the authorization of requester to present requested attestations (own bussiness configuration)
     Buyer_Wallet->>Seller_Portal: present the attestations
     Seller_Portal<<->>Seller_Wallet: verification of attestations (rulebook)
 ```

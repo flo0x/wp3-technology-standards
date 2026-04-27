@@ -96,7 +96,7 @@ sequenceDiagram
     RP_Portal<<->>RP_Wallet: verification of attestations rulebooks
 ```
 
-### 1.2. KYS - Customer Due Diligence  Information
+### 1.3. KYS - Supplier Due Diligence  Information
 ```mermaid
 sequenceDiagram
     actor Initiator
@@ -114,7 +114,7 @@ sequenceDiagram
     RP_Portal<<->>RP_Wallet: verification of attestations (rulebook)
 ```
 
-### 1.3. KYS - Additionally identifier Information
+### 1.4. KYS - Additionally identifier Information
 ```mermaid
 sequenceDiagram
     actor Initiator
@@ -131,7 +131,7 @@ sequenceDiagram
     Supplier_Wallet->>RP_Portal: present the attestations
     RP_Portal<<->>RP_Wallet: verification of attestations (rulebook)
 ```
-### 1.4. KYS - Payment Information
+### 1.5. KYS - Payment Information
 ```mermaid
 sequenceDiagram
     actor Initiator
