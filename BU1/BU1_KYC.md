@@ -99,8 +99,8 @@ sequenceDiagram
         Seller_Portal->>Seller_Portal: embed request into QRCode and provide an openid4vp-URI link for the request
         Initiator->>+Buyer_Wallet: copy/paste openid4vp-URI link into the company wallet or scan the QRCode
     end                 
-    Buyer_Wallet<<->>Supplier_Wallet: mutual authentification ( x509 certificate or eubwoid rulebook)
-    Buyer_Wallet<<->>Supplier_Wallet: check the authorization of requester to present requested attestations (own bussiness configuration)
+    Buyer_Wallet<<->>Seller_Wallet: mutual authentification ( x509 certificate or eubwoid rulebook)
+    Buyer_Wallet<<->>Seller_Wallet: check the authorization of requester to present requested attestations (own bussiness configuration)
     Buyer_Wallet->>Seller_Portal: present the attestations
     Seller_Portal<<->>Seller_Wallet: verification of attestations (rulebook)
 ```
