@@ -1,7 +1,6 @@
 # PA3 MVP Workflow
 
 MVP Restrictions:
-
 ## Company Perspective
 - The person who initiated the account opening process is also: legal representative, UBO and contact person (to make it simple: 4 positions in 1; one-person GmbH in Germany, covering SME-cases)”
 - The initiator is the sole legal representative, who is also the UBO and contact person for the bank relationship (one-person GmbH in Germany, covering SME-cases).
@@ -14,15 +13,13 @@ MVP Restrictions:
 Info: If other banks participate in the MVP, this can be extended to include the POR attestation.
 
 ## Following assumptions for the company business wallet
-The company is authorized to present attestations and receive attestations (no configuration support)
+- The company is authorized to present attestations and receive attestations (no configuration support)
 - Mutual authentication is set to default true (no TLOL or device-binding checks are applied).
 
-## MVP
+## MVP Flow
 - The MVP process (Scenario 1-3) is executed sequentially by one person
 - The process ending with the triggering and issuance of the IBAN-OV issuance/attestation as EAA (means no additional onboarding is required)
-
-## The following topics are not part of the MVP or MVP++
-- UBO calculation is an internal process and is not part of the MVP or MVP+.
+- UBO calculation is an internal process and is not part of the MVP or MVP+. 
 - Discrepancy reporting to the transparency register is a separate process and is not part of the MVP or MVP+.
 
 ## Pre-requisites
