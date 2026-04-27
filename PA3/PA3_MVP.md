@@ -5,31 +5,44 @@ MVP Restrictions:
 ## Company Perspective
 - The person who initiated the account opening process is also: legal representative, UBO and contact person (to make it simple: 4 positions in 1; one-person GmbH in Germany, covering SME-cases)”
 - The initiator is the sole legal representative, who is also the UBO and contact person for the bank relationship (one-person GmbH in Germany, covering SME-cases).
-- Means: No additional persons with signatory rights are required  
-- The company is authorized to present attestations and receive attestations (no configuration support)
+- Means: No additional persons with signatory rights are required
 - The company is not a branch.
-- Mutual authentication is set to default true (no TLOL or device-binding checks are applied).
-- The MVP process (Scenario 1-3) is executed sequentially by one person 
 
 ## Bank perspective
 - The company who wants to open a bank account will be classified as low/medium risk client. It will be no high-risk client (therefore, e.g.: no sanction screening, PEP-screening etc. is required)
 - The bank supports cross-border account opening and no registration in the national register for the initiator/account holder is required.
 Info: If other banks participate in the MVP, this can be extended to include the POR attestation.
+
+## Following assumptions for the company business wallet
+The company is authorized to present attestations and receive attestations (no configuration support)
+- Mutual authentication is set to default true (no TLOL or device-binding checks are applied).
+
+## MVP
+- The MVP process (Scenario 1-3) is executed sequentially by one person
+- The process ending with the triggering and issuance of the IBAN-OV issuance/attestation as EAA (means no additional onboarding is required)
+
+## The following topics are not part of the MVP or MVP++
 - UBO calculation is an internal process and is not part of the MVP or MVP+.
 - Discrepancy reporting to the transparency register is a separate process and is not part of the MVP or MVP+.
-- The process ending with the triggering and issuance of the IBAN-OV issuance/attestation as EAA (means no additional onboarding is required)
 
 ## Pre-requisites
 This are the pre-requisites for the company and bank in order to run the MVP.
 
 ```mermaid
 sequenceDiagram
+    actor Person
+    participant Issuing.Authority 
+    participant EUDI_Wallet 
     participant Auth.Source 
     note right of Auth.Source : Bundesanzeiger, KVK, ...
     participant TransparencyRegister 
     participant TAX_Administration 
     participant Company
-    participant Bank 
+    participant Bank
+    activate Person    
+
+    Issuing.Authority ->> EUDI_Wallet : issuer PID
+    
     Auth.Source ->> Company : issue EBWOID  
     Auth.Source ->> Company : issue EUCC
     Auth.Source ->> Bank : issue EBWOID
@@ -202,7 +215,7 @@ sequenceDiagram
     Bank_Portal->>+Bank_InternalSystem: transfer data to internal system
 
     Bank_Portal->>ConstactPerson: Send notification to the contact person that onboarding was successful.
-    Bank_Portal<<->>RP_Portal: Display success notification for initiator
+    Bank_Portal<<->>Bank_Portal: Display success notification for initiator
 ```
 
 ### 2. Scenario 2
