@@ -36,15 +36,20 @@ sequenceDiagram
         Supplier ->> Supplier: issue TAX
     end
     Supplier ->> Supplier: issue VAT, CompanyInfo,  ContactPerson
-    
     Supplier ->> Supplier: issue OwnershipList,ControlList    
     
-    participant LEI      
-    LEI ->> Supplier: issue LEI 
-    participant GS1
-    GS1 ->> Supplier: issue GS1 
-    Supplier ->> Supplier: issue DUNS, SiteAttestation
-
+    alt Supplier has LEI Number 
+        LEI ->> Supplier: issue LEI
+    else Supplier has GLN Number
+        GS1 ->> Supplier: issue GLN
+    else Supplier has DUNS Number        
+        Supplier ->> Supplier: issue DUNS
+    end 
+    
+    alt Supplier has a Site 
+        Supplier ->> SiteAttestation
+    end
+    
     Supplier ->> Supplier: issue PaymentTerms  
     Bank ->> Supplier: issue IBAN 
     
@@ -96,7 +101,7 @@ sequenceDiagram
     RP_Portal<<->>RP_Wallet: verification of attestations rulebooks
 ```
 
-### 1.3. KYS - Supplier Due Diligence  Information
+### 1.3.1 KYS - Supplier Due Diligence  Information
 ```mermaid
 sequenceDiagram
     actor Initiator
@@ -114,7 +119,7 @@ sequenceDiagram
     RP_Portal<<->>RP_Wallet: verification of attestations (rulebook)
 ```
 
-### 1.4. KYS - Additionally identifier Information
+### 1.3.2. KYS - Additionally identifier Information
 ```mermaid
 sequenceDiagram
     actor Initiator
@@ -131,7 +136,7 @@ sequenceDiagram
     Supplier_Wallet->>RP_Portal: present the attestations
     RP_Portal<<->>RP_Wallet: verification of attestations (rulebook)
 ```
-### 1.5. KYS - Payment Information
+### 1.3.3. KYS - Payment and other additionally Information
 ```mermaid
 sequenceDiagram
     actor Initiator
@@ -149,7 +154,7 @@ sequenceDiagram
     RP_Portal<<->>RP_Wallet: verification of attestations (rulebook)
 ```
 
-### 1.5. KYS-Screening and additionally Information (this will be handled in the MVP+)
+### 1.3.4. KYS-Screening and additionally Information (this will be handled in the MVP+)
 
 ```mermaid
 sequenceDiagram
@@ -168,7 +173,7 @@ sequenceDiagram
     RP_Portal<<->>RP_Wallet: verification of attestations (rulebook)
 ```
 
-### 1.6. Cross-Check  
+### 1.4. Cross-Check  
 ```mermaid
 sequenceDiagram
     actor ContactPerson
