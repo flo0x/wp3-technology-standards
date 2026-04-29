@@ -6,11 +6,14 @@ sequenceDiagram
     participant Buyer_Bank
     participant Buyer_EUDIWallet
 
+    Note over Seller_Bank,Buyer_EUDIWallet: Invoice Reception & Verification
 
     Buyer_Wallet->>+Buyer_Wallet:Receive e-invoice
     Buyer_Wallet->>+ Buyer_VerifSystem : notify the verification of the invoice
     Buyer_VerifSystem->>+Buyer_VerifSystem: validates the e-invoice    
-    
+
+
+    Note over Seller_Bank,Buyer_EUDIWallet: Payment Initiation
     critical Choice of payment
     option IBAN
         Buyer_VerifSystem->>+Buyer_VerifSystem: initiate the payment 
@@ -19,8 +22,9 @@ sequenceDiagram
         Buyer_VerifSystem->>+PSP: initiate the payment 
         PSP ->>+Buyer_Bank : fill the payment  
     end
-    
-    Buyer_Bank->>+Buyer_Bank: analse choice of payment
+
+    Note over Seller_Bank,Buyer_EUDIWallet: Payment Approval & Strong Customer Authentication (SCA)
+    Buyer_Bank->>+Buyer_Bank: analyse choice of payment
 
     critical CardPayment or Risk-Tx or Other
     option CardPayment 
@@ -28,10 +32,12 @@ sequenceDiagram
         Buyer_Bank->>+Buyer_Bank: approves SCA 
     option Other
         Buyer_Bank->>+Buyer_Bank: approves tx (token usage)
-    end 
-    
-    Buyer_Bank<<->>Seller_Bank: sends transaction 
+    end
 
+    Note over Seller_Bank,Buyer_EUDIWallet:  Settlement
+    Buyer_Bank<<->>Seller_Bank: sends transaction
+
+    Note over Seller_Bank,Buyer_EUDIWallet:  Reconciliation
     critical Choice of payment
     option IBAN
         Buyer_Bank->>+Buyer_VerifSystem : send payment confirmation
