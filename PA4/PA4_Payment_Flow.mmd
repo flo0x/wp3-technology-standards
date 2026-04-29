@@ -26,11 +26,8 @@ sequenceDiagram
     option CardPayment 
         Buyer_Bank<<-->>Buyer_EUDIWallet: requests SCA
         Buyer_Bank->>+Buyer_Bank: approves SCA 
-    option Risk-Tx (with SCA req)
-        Buyer_Bank<<-->>Buyer_EUDIWallet: requests SCA
-        Buyer_Bank->>+Buyer_Bank: approves SCA
     option Other
-        Buyer_Bank->>+Buyer_Bank: approves tx
+        Buyer_Bank->>+Buyer_Bank: approves tx (token usage)
     end 
     
     Buyer_Bank<<->>Seller_Bank: sends transaction 
