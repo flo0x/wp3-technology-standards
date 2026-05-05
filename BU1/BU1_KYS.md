@@ -87,37 +87,42 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
     actor Initiator
-    RP_Portal<<->>RP_Wallet: generate proof-request
-    RP_Portal<<->>RP_Wallet: for EBWOID, EUCC,TAX, VAT, CompanyInfo, ContactPerson
+    RP_Portal->>RP_Wallet: generate proof-request
+    RP_Portal->>RP_Wallet: for EBWOID, EUCC,TAX, VAT, CompanyInfo, ContactPerson
     alt Automatically (EUBW support end-points)
-        RP_Portal->>+Supplier_Wallet: request presentations 
+        RP_Wallet->>+Supplier_Wallet: request presentations 
     else Manually ( EUBW or EUDI Wallet)
         RP_Portal->>RP_Portal: embed request into QRCode and provide an openid4vp-URI for the request
         Initiator->>+Supplier_Wallet: copy/paste openid4vp-URI into the company wallet or scan the QRCode
     end
-    Supplier_Wallet<<->>Supplier_Wallet: mutual authentification ( x509 certificate or eubwoid rulebook)
+    Supplier_Wallet->>RP_Wallet: request mutual authentification ( x509 certificate or eubwoid rulebook)
+    RP_Wallet->>Supplier_Wallet: present mutual authentification ( x509 certificate or eubwoid rulebook)
     Supplier_Wallet<<->>Supplier_Wallet: check the authorization of requester to present requested attestations (own business configuration)
-    Supplier_Wallet->>RP_Portal: present the attestations
-    RP_Portal<<->>RP_Wallet: verification of attestations rulebooks
+    Supplier_Wallet->>RP_Wallet: present the attestations
+    RP_Wallet->>RP_Portal: sends sucess of verification of conformity regarding issuers, rulebooks and vadility 
+ 
 ```
+RP_Portal represents in this case companies web portal and internal ERP System. 
 
 ### 1.3.1 KYS - Supplier Due Diligence  Information
 ```mermaid
 sequenceDiagram
     actor Initiator
-    RP_Portal<<->>RP_Wallet: generate proof-request
-    RP_Portal<<->>RP_Wallet: for OwnershipList,ControlList -> only the relevant KYS attributes ( GDPR conform)  
+    RP_Portal->>RP_Wallet: generate proof-request
+    RP_Portal->>RP_Wallet: for OwnershipList,ControlList -> only the relevant KYS attributes ( GDPR conform)  
     alt Automatically (EUBW support end-points)
         RP_Portal->>+Supplier_Wallet: request presentations
     else Manually ( EUBW or EUDI Wallet)
         RP_Portal->>RP_Portal: embed request into QRCode and provide an openid4vp-URI link for the request
         Initiator->>+Supplier_Wallet: copy/paste openid4vp-URI link into the company wallet or scan the QRCode
     end                 
-    Supplier_Wallet<<->>Supplier_Wallet: mutual authentification ( x509 certificate or eubwoid rulebook)
-    Supplier_Wallet<<->>Supplier_Wallet: check the authorization of requester to present requested attestations (own bussiness configuration)
-    Supplier_Wallet->>RP_Portal: present the attestations
-    RP_Portal<<->>RP_Wallet: verification of attestations (rulebook)
+    Supplier_Wallet->>RP_Wallet: request mutual authentification ( x509 certificate or eubwoid rulebook)
+    RP_Wallet->>Supplier_Wallet: present mutual authentification ( x509 certificate or eubwoid rulebook)
+    Supplier_Wallet<<->>Supplier_Wallet: check the authorization of requester to present requested attestations (own business configuration)
+    Supplier_Wallet->>RP_Wallet: present the attestations
+    RP_Wallet->>RP_Portal: sends sucess of verification of conformity regarding issuers, rulebooks and vadility 
 ```
+RP_Portal represents in this case companies web portal and internal ERP System. 
 
 ### 1.3.2. KYS - Additionally identifier Information
 ```mermaid
@@ -131,11 +136,14 @@ sequenceDiagram
         RP_Portal->>RP_Portal: embed request into QRCode and provide an openid4vp-URI link for the request
         Initiator->>+Supplier_Wallet: copy/paste openid4vp-URI link into the company wallet or scan the QRCode
     end                 
-    Supplier_Wallet<<->>Supplier_Wallet: mutual authentification ( x509 certificate or eubwoid rulebook)
-    Supplier_Wallet<<->>Supplier_Wallet: check the authorization of requester to present requested attestations (own bussiness configuration)
-    Supplier_Wallet->>RP_Portal: present the attestations
-    RP_Portal<<->>RP_Wallet: verification of attestations (rulebook)
+    Supplier_Wallet->>RP_Wallet: request mutual authentification ( x509 certificate or eubwoid rulebook)
+    RP_Wallet->>Supplier_Wallet: present mutual authentification ( x509 certificate or eubwoid rulebook)
+    Supplier_Wallet<<->>Supplier_Wallet: check the authorization of requester to present requested attestations (own business configuration)
+    Supplier_Wallet->>RP_Wallet: present the attestations
+    RP_Wallet->>RP_Portal: sends sucess of verification of conformity regarding issuers, rulebooks and vadility 
 ```
+RP_Portal represents in this case companies web portal and internal ERP System. 
+
 ### 1.3.3. KYS - Payment and other additionally Information
 ```mermaid
 sequenceDiagram
@@ -148,14 +156,15 @@ sequenceDiagram
         RP_Portal->>RP_Portal: embed request into QRCode and provide an openid4vp-URI link for the request
         Initiator->>+Supplier_Wallet: copy/paste openid4vp-URI link into the company wallet or scan the QRCode
     end                 
-    Supplier_Wallet<<->>Supplier_Wallet: mutual authentification ( x509 certificate or eubwoid rulebook)
-    Supplier_Wallet<<->>Supplier_Wallet: check the authorization of requester to present requested attestations (own bussiness configuration)
-    Supplier_Wallet->>RP_Portal: present the attestations
-    RP_Portal<<->>RP_Wallet: verification of attestations (rulebook)
+     Supplier_Wallet->>RP_Wallet: request mutual authentification ( x509 certificate or eubwoid rulebook)
+    RP_Wallet->>Supplier_Wallet: present mutual authentification ( x509 certificate or eubwoid rulebook)
+    Supplier_Wallet<<->>Supplier_Wallet: check the authorization of requester to present requested attestations (own business configuration)
+    Supplier_Wallet->>RP_Wallet: present the attestations
+    RP_Wallet->>RP_Portal: sends sucess of verification of conformity regarding issuers, rulebooks and vadility 
 ```
+RP_Portal represents in this case companies web portal and internal ERP System. 
 
 ### 1.3.4. KYS-Screening and additionally Information (this will be handled in the MVP+)
-
 ```mermaid
 sequenceDiagram
     actor Initiator
@@ -167,11 +176,13 @@ sequenceDiagram
         RP_Portal->>RP_Portal: embed request into QRCode and provide an openid4vp-URI link for the request
         Initiator->>+Supplier_Wallet: copy/paste openid4vp-URI link into the company wallet or scan the QRCode
     end                 
-    Supplier_Wallet<<->>Supplier_Wallet: mutual authentification ( x509 certificate or eubwoid rulebook)
-    Supplier_Wallet<<->>Supplier_Wallet: check the authorization of requester to present requested attestations (own bussiness configuration)
-    Supplier_Wallet->>RP_Portal: present the attestations
-    RP_Portal<<->>RP_Wallet: verification of attestations (rulebook)
+    Supplier_Wallet->>RP_Wallet: request mutual authentification ( x509 certificate or eubwoid rulebook)
+    RP_Wallet->>Supplier_Wallet: present mutual authentification ( x509 certificate or eubwoid rulebook)
+    Supplier_Wallet<<->>Supplier_Wallet: check the authorization of requester to present requested attestations (own business configuration)
+    Supplier_Wallet->>RP_Wallet: present the attestations
+    RP_Wallet->>RP_Portal: sends sucess of verification of conformity regarding issuers, rulebooks and vadility 
 ```
+RP_Portal represents in this case companies web portal and internal ERP System. 
 
 ### 1.4. Cross-Check  
 ```mermaid
