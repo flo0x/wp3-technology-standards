@@ -7,27 +7,22 @@ MVP Restrictions:
 - The seller is not required to complete onboarding with the Home Bank (PA3) or onboarding into the KYS process (BU1 – KYS).
 
 ## Buyer Perspective (Relying Party)
-- The buyer has an active European Business Wallet (EUBW) containing only the minimum set of attestations required to execute PA4.
-- The company is not required to complete onboarding with the Home Bank (PA3) or onboarding into the KYC process (BU1 – KYC).
-- the validation of the IBAN  is out of scope (since the KYS process was escaped) 
-- It is assumed that the eInvoice has already been received in the Business Wallet. 
-- The delivery channel is out of scope for the MVP (part of the SC5)
-- Sellers are assumed to be classified only as low- or medium-risk sellers.
-- High-risk seller scenarios are out of scope for the MVP.
-- The company’s Business Wallet contains a valid Mandate Verifiable Presentation (VP) listing the authorised signatories (SR), as well as the corresponding Power of Attorney (PoA) for the acting person.
-- The direct exchange scenario is covered by SC5.
-- For the MVP, the onboarding process is executed sequentially as a single-user flow.
-- The process ends with the issuance of the eReceipt VC into the Business Wallet, bound to the legal entity.
+- The buyer holds an active European Business Wallet (EUBW) containing only the minimum set of attestations required to execute PA4.
+- The buyer is not required to complete onboarding with the Home Bank (PA3) or undergo onboarding into the KYC process (BU1 – KYC).
+- The onboarding of the acting person representing the buyer company within the Home Bank is performed as part of the end-customer onboarding process, rather than as a separate business representative onboarding process (covered under PA2).
+- Consequently, the buyer’s Business Wallet is assumed to contain valid Authorised Signatory Rights (SR) attestations, together with the corresponding Power of Attorney (PoA) for the acting person.
+- Alternatively, this verification step may be deferred and addressed only in the MVP+ phase.
+- In the case of IBAN-based transactions, the IBAN information provided in the eInvoice is assumed to be trusted. The IBAN validation is considered out of scope for the MVP, as the KYS/KYC process is excluded.
+- It is assumed that the eInvoice has already been received in the Business Wallet. The invoice delivery channel is out of scope for the MVP and covered under SC5.
+- Sellers are assumed to be classified exclusively as low- or medium-risk sellers.
+- For the MVP, the onboarding process is executed sequentially in a single-user flow.
+- The process concludes with the issuance of the eReceipt Attestation into the Business Wallet, bound to the legal entity. No attestation is issued to the acting person’s EUDI Wallet.
 
 ## Person Perspective
-- The natural person acting on behalf of the legal entity holds a valid personal EUDI Wallet containing a PID credential.
-- The person is listed as an authorised representative of the company for interactions with the financial sector (SR).
-- The person also holds a valid Power of Attorney (PoA) specifying the permitted scope of authority (e.g. transactions without limitation).
-- It is assumed that the person holds the SCA attestation in the wallet ( PA1 use case).
+- The natural person acting on behalf of the legal entity holds a valid EUDI Wallet containing a PID credential.
+- It is assumed that the person holds the SCA attestation in the wallet ( PA2 use case). 
 - Validation of the company’s authorised representative lists (SR) is out of scope for the MVP.
 - The person performs Strong Customer Authentication (SCA) using possession of the wallet device combined with either a PIN or biometric authentication.
-- In the case of IBAN-based transactions, the IBAN information provided in the eInvoice is assumed to be trusted. 
-- High-risk transaction scenarios are excluded from the MVP scope and may be addressed in a future MVP+ phase.
 
 ## Assumptions – Holder Business Wallet
 a.Automatic Flow
