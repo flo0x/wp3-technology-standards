@@ -11,12 +11,10 @@ MVP Restrictions:
 - The buyer is not required to complete onboarding with the Home Bank (PA3) or undergo onboarding into the KYC process (BU1 – KYC).
 - The onboarding of the acting person representing the buyer company within the Home Bank is performed as part of the end-customer onboarding process, rather than as a separate business representative onboarding process (covered under PA2).
 - Consequently, the buyer’s Business Wallet is assumed to contain valid Authorised Signatory Rights (SR) attestations, together with the corresponding Power of Attorney (PoA) for the acting person.
-- Alternatively, this verification step may be deferred and addressed only in the MVP+ phase.
-- In the case of IBAN-based transactions, the IBAN information provided in the eInvoice is assumed to be trusted. The IBAN validation is considered out of scope for the MVP, as the KYS/KYC process is excluded.
-- It is assumed that the eInvoice has already been received in the Business Wallet. The invoice delivery channel is out of scope for the MVP and covered under SC5.
+- In the case of IBAN-based transactions, the IBAN information provided in the eInvoice is assumed to be trusted. 
+- The IBAN validation is considered out of scope for the MVP, as the KYS/KYC process is excluded.
+- The invoice delivery channel is out of scope for the MVP and covered under SC5.
 - Sellers are assumed to be classified exclusively as low- or medium-risk sellers.
-- For the MVP, the onboarding process is executed sequentially in a single-user flow.
-- The process concludes with the issuance of the eReceipt Attestation into the Business Wallet, bound to the legal entity. No attestation is issued to the acting person’s EUDI Wallet.
 
 ## Person Perspective
 - The natural person acting on behalf of the legal entity holds a valid EUDI Wallet containing a PID credential.
@@ -25,24 +23,26 @@ MVP Restrictions:
 - The person performs Strong Customer Authentication (SCA) using possession of the wallet device combined with either a PIN or biometric authentication.
 
 ## Assumptions – Holder Business Wallet
-a.Automatic Flow
-- Mutual authentication is enabled by default; no TLOL or device-binding checks are applied.
-- The buyer wallet is pre-authorized to present and receive attestations; no additional configuration is supported in the MVP.
-- The Business Wallet accepts credential offers automatically when an active corporate authorisation session is already established.
+- Automatic Flow
+  - Mutual authentication is enabled by default; no TLOL or device-binding checks are applied.
+  - The buyer wallet is pre-authorized to both present and receive attestations; no additional configuration is supported in the MVP.
+  - The Business Wallet accepts credential offers automatically when an active corporate authorisation session is already established.
 
-b. Manual Flow
-- Mutual authentication is reduced to a visual verification step.
-- Authorization is reduced to a visual check and manual approval process.
+- Manual Flow
+  - Mutual authentication is reduced to a visual verification step.
+  - Authorization is reduced to a visual check and manual approval process.
 
 ## Assumptions – Relying Party Business Wallet
 - Attestation verification for each attestation is limited to:
-  a. Cryptographic validation (Section 4.2.1)
-  b. Basic issuer identification against an internal trusted list (Sections 4.2.2–4.2.3)
+  - Cryptographic validation (Section 4.2.1)
+  - Issuer identification against an internal trusted list (Sections 4.2.2-4.3.3)
 
-## General 
+## General UseCase assumption  
+- the payment process is executed sequentially in a single-user flow.
 - It is assumed that the eInvoice has already been received in the Business Wallet.
 - Cross-border cases is not part of the MVP.
-- The process ends with the issuance of the eReceipt VC into the Business Wallet, bound to the legal entity.
+- The process concludes with the issuance of the eReceipt Attestation into the Business Wallet.
+- No attestation is issued to the acting person’s EUDI Wallet.
 
 
 ## Pre-requisites
