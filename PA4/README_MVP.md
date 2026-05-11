@@ -102,7 +102,7 @@ participant PSP  as PSP
     %% ──────────────────────────────────────────────
     %% STEP 2 – Payment Initiation 
     %% ──────────────────────────────────────────────
-    note over Seller, Bank  : Step 2  – Payment Initiation
+    note over Seller, PSP  : Step 2  – Payment Initiation
     alt Choice of "payment by card"
         Initiator <<->> EUDI_Wallet : scan the code 
         EUDI_Wallet <<->> PSP: initiate the payment 
@@ -118,8 +118,6 @@ participant PSP  as PSP
     alt Choice of "card payment"
         PSP <<->> EUDI_Wallet: request the SCA
         Initiator <<->> EUDI_Wallet : present the SCA
-        PSP <<->> PSP : verify the SCA 
-        PSP <<->> Bank : start the settlement process 
     else Choice of "IBAN payment - standard"
         Bank <<->> Bank  : token validity check    
     end
@@ -127,13 +125,14 @@ participant PSP  as PSP
     %% ──────────────────────────────────────────────
     %% STEP 4 –  Legal Entity - Payment Authorization 
     %% ──────────────────────────────────────────────
-    note over Seller, Bank  : Step 4 – Legal Entity Payment Authorization
+    note over Seller,  PSP  : Step 4 – Legal Entity Payment Authorization
     alt Choice of "card payment"
-        Bank <<->> Buyer : check initiator authorization (SignatoryRights, PoA (scope: card, limit:  ) )   
+        PSP <<->> Buyer : check initiator authorization  (PoA (scope: card, limit:  x) ) 
+        PSP <<->> Bank : initiate the settlement  
     else Choice of "IBAN payment - high tx"
-        Bank <<->> Buyer : check initiator authorization (SignatoryRights, PoA (scope : tx, limit : 1000K  )
+        Bank <<->> Buyer : check initiator authorization (SignatoryRights, PoA (scope : tx, limit : x  )
     else Choice of "IBAN payment - standard"
-        Bank <<->> Buyer : check the token authorization
+        Bank <<->> Buyer : check the token authorization and initiate the settlement
     end
 
     %% ──────────────────────────────────────────────
