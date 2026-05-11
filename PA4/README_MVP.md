@@ -78,7 +78,7 @@ participant Payment_Processor
     Buyer <<->> Payment_Processor : Connnect to payment processoer ( internal system or PSP - Provider)
 ```
 
-### 1. Scenario 1 
+### 1. Scenario 
 
 The following diagram provides an overview of the end-to-end process
 
@@ -89,6 +89,7 @@ actor Initiator
 participant EUDI_Wallet  as EUDI_Wallet
 participant Buyer  as Buyer
 participant Bank as Bank
+participant PSP  as PSP
 
     Seller ->> Buyer : The buyer company receives an electronic invoice (eInvoice) in its Business Wallet (direct or indirect)
     %% ──────────────────────────────────────────────
@@ -103,7 +104,8 @@ participant Bank as Bank
     %% ──────────────────────────────────────────────
     note over Seller, Bank  : Step 2  – Payment Initiation
     alt Choice of "payment by card"
-        Initiator <<->> Bank : initiate the payment 
+        Initiator <<->> EUDI_Wallet : scan the code 
+        EUDI_Wallet <<->> PSP: initiate the payment 
     else Choice of "payment via bank transfer(IBAN)"
         Initiator <<->> Buyer : initiate the payment IBAN transfer.
         Buyer <<->> Bank : trigger payment filling with token 
@@ -114,8 +116,10 @@ participant Bank as Bank
     %% ──────────────────────────────────────────────
     note over Seller, Bank  : Step 3 – Payment Authorization
     alt Choice of "card payment"
-        Bank <<->> Bank: request the SCA
+        PSP <<->> EUDI_Wallet: request the SCA
         Initiator <<->> EUDI_Wallet : present the SCA
+        PSP <<->> PSP : verify the SCA 
+        PSP <<->> Bank : start the settlement process 
     else Choice of "IBAN payment - standard"
         Bank <<->> Bank  : token validity check    
     end
@@ -125,7 +129,7 @@ participant Bank as Bank
     %% ──────────────────────────────────────────────
     note over Seller, Bank  : Step 4 – Legal Entity Payment Authorization
     alt Choice of "card payment"
-        Bank <<->> Buyer : check initiator authorization (SignatoryRights, PoA (scope: card, limit: 0 ) )   
+        Bank <<->> Buyer : check initiator authorization (SignatoryRights, PoA (scope: card, limit:  ) )   
     else Choice of "IBAN payment - high tx"
         Bank <<->> Buyer : check initiator authorization (SignatoryRights, PoA (scope : tx, limit : 1000K  )
     else Choice of "IBAN payment - standard"
