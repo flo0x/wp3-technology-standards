@@ -319,9 +319,9 @@ sequenceDiagram
     note over EBW_Issuer_B: EBW Issuer B acts as both<br/>Attestation Issuer and<br/>Authentic/Primary Source<br/>(per ETSI 119 478 / EBW Art. 5)
     participant EBW_QTSP
 
-    rect rgb(0, 0, 0)
+    rect rgb(240, 240, 240)
         note over Employee_A, EBW_QTSP: Phase 0: Employee Login via EUDI Wallet
-
+    end 
         Employee_A -->> EBW_Issuer_B: Navigates to Issuer B portal,<br/>initiates login
         EBW_Issuer_B -->> EUDI_Employee_A: Displays Login QR-Code<br/>(OID4VP Request: PID or SCA attestation)
         Employee_A -->> EUDI_Employee_A: Scans QR-Code
@@ -346,7 +346,7 @@ sequenceDiagram
             EBW_Issuer_B -->> EUDI_Employee_A: SCA Attestation Issuance
             EBW_Issuer_B -->> Employee_A: Session established:<br/>Employee A as authorized representative of Company A
         end
-    end 
+     
 ```
 
 ### 3.2. Service Selection and IBAN Issuing
@@ -356,52 +356,21 @@ sequenceDiagram
     title IBAN-OV Attestation (QEAA) Flow | MVP+ Scenario
 
     actor Employee_A
-    participant EUDI_Employee_A
     note over Employee_A: Employee_A is not the initiator of Scenario 1<br/>but is listed on PoA and SR attestations
     participant EBW_Company_A
     participant EBW_Issuer_B
     note over EBW_Issuer_B: EBW Issuer B acts as both<br/>Attestation Issuer and<br/>Authentic/Primary Source<br/>(per ETSI 119 478 / EBW Art. 5)
     participant EBW_QTSP
-
-    rect rgb(0, 0, 0)
-        note over Employee_A, EBW_QTSP: Phase 0: Employee Login via EUDI Wallet
-
-        Employee_A -->> EBW_Issuer_B: Navigates to Issuer B portal,<br/>initiates login
-        EBW_Issuer_B -->> EUDI_Employee_A: Displays Login QR-Code<br/>(OID4VP Request: PID or SCA attestation)
-        Employee_A -->> EUDI_Employee_A: Scans QR-Code
-        EUDI_Employee_A -->> Employee_A: User Consent Screen<br/>(PID or SCA displayed)
-
-        alt SCA Token available due to prior successful onboarding
-            Employee_A -->> EUDI_Employee_A: Confirms consent for SCA
-            EUDI_Employee_A -->> EBW_Issuer_B: Presents SCA
-            EBW_Issuer_B -->> Employee_A: Session established:<br/>Employee A as authorized representative of Company A
-        else Onboarding based on PID
-            Employee_A -->> EUDI_Employee_A: Confirms consent for e.g. PID
-            EUDI_Employee_A -->> EBW_Issuer_B: Presents VP Token (PID)
-            EBW_Issuer_B -->> EBW_Issuer_B: Resolve registered EBW URIs<br/>based on PID (+ PoA) data
-            EBW_Issuer_B <<-->> EBW_Company_A: Mutual authentication via<br/>EBWOID & EUCC (OID4VP)
-
-            opt Non-legal representative in EUCC
-                EBW_Issuer_B -->> EBW_Company_A: Requests suitable PoA
-                EBW_Company_A -->> EBW_Issuer_B: Presents PoA
-            end
-
-            EBW_Issuer_B -->> EBW_Issuer_B: Cross-check EBWOID + SR attestation against<br/>internal KYC & contractual data<br/>Account confirmed
-            EBW_Issuer_B -->> EUDI_Employee_A: SCA Attestation Issuance
-            EBW_Issuer_B -->> Employee_A: Session established:<br/>Employee A as authorized representative of Company A
-        end
-    end
-
-    rect rgb(0, 0, 0)
+    
+    rect rgb(220, 235, 255)
         note over Employee_A, EBW_QTSP: Phase 1: Corporate Dashboard and Service Selection
-
+    end
         Employee_A -->> EBW_Issuer_B: Selects "IBAN-OV Attestation" service
         Employee_A -->> EBW_Issuer_B: Selects the specific IBAN account
-    end
-
-    rect rgb(0, 0, 0)
+    
+    rect rgb(220, 255, 220)
         note over Employee_A, EBW_QTSP: Phase 2: IBAN-OV Credential Issuance by QTSP
-
+    end
         EBW_Issuer_B -->> EBW_Issuer_B: Retrieves IBAN-OV data<br/>from core banking system<br/>(acting as Authentic Source per ETSI 119 478)<br/>(IBAN, BIC, account holder, currency, status)<br/>Applies Seal over payload<br/>Stores hash & timestamp in audit log
 
         EBW_Issuer_B -->> EBW_QTSP: Forwards signed IBAN-OV payload<br/>+ hash commitment for Seal signing
@@ -419,5 +388,5 @@ sequenceDiagram
         EBW_Company_A -->> EBW_Company_A: Validates & stores QEAA<br/>in Enterprise Wallet
 
         EBW_Issuer_B -->> Employee_A: Displays success notification
-    end
+    
 ```
