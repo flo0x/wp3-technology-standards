@@ -124,7 +124,7 @@ sequenceDiagram
     end
 ```
 
-### 1.5. KYC - Customer Due Diligence Information
+### 1.5. Ownership & Control Structure Information
 
 ```mermaid
 sequenceDiagram
@@ -247,26 +247,45 @@ sequenceDiagram
 ### 3. Scenario 3
 
 ### 3.1. Onboarding process (for future access of bank services)
-This will be handled in the MVP+
+This will be handled in the MVP+ (session handling)
 
 ### 3.2. IBAN Issuing
 
 ```mermaid
 sequenceDiagram
-    actor Initiator
-    participant Company_Wallet
-    Initiator ->>+Bank_Portal : Selects "IBAN-OV Attestation" service
+    title MVP: IBAN_OV_Issuance (after successful account opening)
 
-    Bank_Portal ->>+Bank_InternalSystem: Retrieves authoritative IBAN-OV data
-    Bank_Portal ->>+Bank_Wallet : Creates structured IBAN-OV EAA
-    Bank_Portal ->>+Company_Wallet : Delivers signed IBAN-OV EAA
-    Company_Wallet<<->>Company_Wallet: mutual authentification ( x509 certificate or eubwoid rulebook)
-    Company_Wallet<<->>Company_Wallet: check the authorization of requester to issue the attestations (own bussiness configuration)
-    Company_Wallet<<->>Company_Wallet: verification of attestations (IBAN-OV rulebook issuance)
-    Company_Wallet->>+Bank_Portal: confirm the acceptance
-    Bank_Portal->>+Company_Wallet: issue the attestation
-    Company_Wallet<<->>Company_Wallet: store the attestation
-    
-    Bank_Portal ->>+Bank_Portal : Displays success notification (IBAN issued)
+    actor Employee_A
+    note over Employee_A: Employee_A = <br/>Legal representative
+
+    participant EUDI_Employee_A
+    participant EBW_Company_A
+    participant Issuer_B
+    note over Issuer_B: Issuer B = EBW + Backend<br/>acting as Issuer and Authentic Source<br/>(per ETSI 119 478)
+
+    rect rgb(240, 240, 240)
+        note over Employee_A, Issuer_B: Phase 0: Being skipped due to successful Scenario 1 and 2 execution
+    end
+
+    Issuer_B -->> Employee_A: Session established:<br/>Employee A as authorized representative of Company A<br/>Displays corporate service dashboard
+
+    rect rgb(220, 235, 255)
+        note over Employee_A, Issuer_B: Phase 1: Service Selection & Institutional Authentication
+    end
+
+    Employee_A -->> Issuer_B: Selects "IBAN-OV Attestation" service for a specific account<br/>(Multi-account selection possible)
+
+    rect rgb(220, 255, 220)
+        note over Employee_A, Issuer_B: Phase 2: IBAN-OV Credential Issuance as EAA
+    end
+
+    Issuer_B -->> Issuer_B: Retrieves authoritative IBAN-OV data<br/>from core banking system<br/>(acting as Authentic Source per ETSI 119 478:<br/>IBAN, BIC, account holder, currency, status)
+
+    Issuer_B -->> Issuer_B: Creates structured IBAN-OV EAA,<br/>applies Seal (self-issued EAA)<br/>Logs issuance event<br/>(audit trail, timestamp, credential ID)
+
+    Issuer_B -->> EBW_Company_A: Delivers Sealed IBAN-OV EAA<br/>via Credential Endpoint (OID4VCI)
+
+    EBW_Company_A -->> EBW_Company_A: Validates Seal & stores EAA<br/>in Enterprise Wallet
+
+    Issuer_B -->> Employee_A: Displays success notification
 ```
-

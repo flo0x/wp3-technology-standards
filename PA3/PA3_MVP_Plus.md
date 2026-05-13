@@ -128,7 +128,7 @@ sequenceDiagram
     
 ```
 
-### 1.5. Additionally KYC information
+### 1.5. Ownership & Control Structure Information
 
 ```mermaid
 sequenceDiagram
@@ -306,56 +306,118 @@ sequenceDiagram
 
 ### 3. Scenario 3
 
-### 3.1. Onboarding process (this will be handled in the MVP+)
+### 3.1. Onboarding process
 
 ```mermaid
 sequenceDiagram
-    actor Person
-    participant EUDIWallet
+    
+    actor Employee_A
+    participant EUDI_Employee_A
+    note over Employee_A: Employee_A is not the initiator of Scenario 1<br/>but is listed on PoA and SR attestations
+    participant EBW_Company_A
+    participant EBW_Issuer_B
+    note over EBW_Issuer_B: EBW Issuer B acts as both<br/>Attestation Issuer and<br/>Authentic/Primary Source<br/>(per ETSI 119 478 / EBW Art. 5)
+    participant EBW_QTSP
 
-    Bank_Portal<<->>Bank_Wallet: generate request to identity Initiator (PID) and embed into QRCode
-    Person->>+EUDIWallet : scans QR Code with personal wallet
-    EUDIWallet->>+EUDIWallet : mutual authentification ( auth. certificate )
-    Person->>+EUDIWallet : check the authorization for presentation (visual check)
-    EUDIWallet->Bank_Portal : send the pid information
-    Bank_Portal<<->>Bank_Wallet: verification of PID  (rulebook)
-    Bank_Portal<<->>Bank_Portal: Cross check against the EUCC and SR
-    critical 
-        option person not onboarded and in EUCC
-            Bank_Portal<<->>SR Person : issue token 
-        option person not onboarded and in SR 
-            Bank_Portal<<->>Bank_Wallet: generate proof-request EU POA  
-            critical 
-                option Automatically (EUBW support end-points)
-                    Bank_Portal->>+Company_Wallet: request presentation POA 
-                option Manually ( EUBW or EUDI Wallet)
-                    Bank_Portal->>Bank_Portal: embed request into QRCode and provide a DeepLink for the request
-                    Person->>+Company_Wallet: copy/paste deep-link presentation into the company wallet or scan the QRCode
+    rect rgb(0, 0, 0)
+        note over Employee_A, EBW_QTSP: Phase 0: Employee Login via EUDI Wallet
+
+        Employee_A -->> EBW_Issuer_B: Navigates to Issuer B portal,<br/>initiates login
+        EBW_Issuer_B -->> EUDI_Employee_A: Displays Login QR-Code<br/>(OID4VP Request: PID or SCA attestation)
+        Employee_A -->> EUDI_Employee_A: Scans QR-Code
+        EUDI_Employee_A -->> Employee_A: User Consent Screen<br/>(PID or SCA displayed)
+
+        alt SCA Token available due to prior successful onboarding
+            Employee_A -->> EUDI_Employee_A: Confirms consent for SCA
+            EUDI_Employee_A -->> EBW_Issuer_B: Presents SCA
+            EBW_Issuer_B -->> Employee_A: Session established:<br/>Employee A as authorized representative of Company A
+        else Onboarding based on PID
+            Employee_A -->> EUDI_Employee_A: Confirms consent for e.g. PID
+            EUDI_Employee_A -->> EBW_Issuer_B: Presents VP Token (PID)
+            EBW_Issuer_B -->> EBW_Issuer_B: Resolve registered EBW URIs<br/>based on PID (+ PoA) data
+            EBW_Issuer_B <<-->> EBW_Company_A: Mutual authentication via<br/>EBWOID & EUCC (OID4VP)
+
+            opt Non-legal representative in EUCC
+                EBW_Issuer_B -->> EBW_Company_A: Requests suitable PoA
+                EBW_Company_A -->> EBW_Issuer_B: Presents PoA
             end
-            Company_Wallet<<->>Company_Wallet: mutual authentification ( x509 certificate or eubwoid rulebook)
-            Company_Wallet<<->>Company_Wallet: check the authorization of requester to present requested attestations (own business configuration)
-            Company_Wallet->>Bank_Portal: present the attestations
-            Bank_Portal<<->>Bank_Wallet: verification of attestations rulebooks                    
-            Bank_Portal<<->>SR Person : issue token 
-       option other 
-            Note right of Bank_Portal: no access to the portal  
-    end
+
+            EBW_Issuer_B -->> EBW_Issuer_B: Cross-check EBWOID + SR attestation against<br/>internal KYC & contractual data<br/>Account confirmed
+            EBW_Issuer_B -->> EUDI_Employee_A: SCA Attestation Issuance
+            EBW_Issuer_B -->> Employee_A: Session established:<br/>Employee A as authorized representative of Company A
+        end
+    end 
 ```
 
-### 3.2. IBAN Issuing
+### 3.2. Service Selection and IBAN Issuing
 
 ```mermaid
 sequenceDiagram
-    actor Person
-    Person ->>+Bank_Portal : Selects "IBAN-OV Attestation" service
+    title IBAN-OV Attestation (QEAA) Flow | MVP+ Scenario
 
-    Bank_Portal ->>+Bank_InternalSystem: Retrieves authoritative IBAN-OV data
-    Bank_Portal ->>+Bank_Wallet : Creates structured IBAN-OV EAA
-    Bank_Portal ->>+Company_Wallet : Delivers signed IBAN-OV EAA
-    Company_Wallet<<->>Company_Wallet: mutual authentification ( x509 certificate or eubwoid rulebook)
-    Company_Wallet<<->>Company_Wallet: check the authorization of requester to issue the attestations (own bussiness configuration)
-    Company_Wallet->>+Bank_Portal: confirm the acceptance
+    actor Employee_A
+    participant EUDI_Employee_A
+    note over Employee_A: Employee_A is not the initiator of Scenario 1<br/>but is listed on PoA and SR attestations
+    participant EBW_Company_A
+    participant EBW_Issuer_B
+    note over EBW_Issuer_B: EBW Issuer B acts as both<br/>Attestation Issuer and<br/>Authentic/Primary Source<br/>(per ETSI 119 478 / EBW Art. 5)
+    participant EBW_QTSP
 
-    Bank_Portal->>+Company_Wallet: issue the attestation
-    Bank_Portal ->>+Bank_Portal : Displays success notification (IBAN issued)
+    rect rgb(0, 0, 0)
+        note over Employee_A, EBW_QTSP: Phase 0: Employee Login via EUDI Wallet
+
+        Employee_A -->> EBW_Issuer_B: Navigates to Issuer B portal,<br/>initiates login
+        EBW_Issuer_B -->> EUDI_Employee_A: Displays Login QR-Code<br/>(OID4VP Request: PID or SCA attestation)
+        Employee_A -->> EUDI_Employee_A: Scans QR-Code
+        EUDI_Employee_A -->> Employee_A: User Consent Screen<br/>(PID or SCA displayed)
+
+        alt SCA Token available due to prior successful onboarding
+            Employee_A -->> EUDI_Employee_A: Confirms consent for SCA
+            EUDI_Employee_A -->> EBW_Issuer_B: Presents SCA
+            EBW_Issuer_B -->> Employee_A: Session established:<br/>Employee A as authorized representative of Company A
+        else Onboarding based on PID
+            Employee_A -->> EUDI_Employee_A: Confirms consent for e.g. PID
+            EUDI_Employee_A -->> EBW_Issuer_B: Presents VP Token (PID)
+            EBW_Issuer_B -->> EBW_Issuer_B: Resolve registered EBW URIs<br/>based on PID (+ PoA) data
+            EBW_Issuer_B <<-->> EBW_Company_A: Mutual authentication via<br/>EBWOID & EUCC (OID4VP)
+
+            opt Non-legal representative in EUCC
+                EBW_Issuer_B -->> EBW_Company_A: Requests suitable PoA
+                EBW_Company_A -->> EBW_Issuer_B: Presents PoA
+            end
+
+            EBW_Issuer_B -->> EBW_Issuer_B: Cross-check EBWOID + SR attestation against<br/>internal KYC & contractual data<br/>Account confirmed
+            EBW_Issuer_B -->> EUDI_Employee_A: SCA Attestation Issuance
+            EBW_Issuer_B -->> Employee_A: Session established:<br/>Employee A as authorized representative of Company A
+        end
+    end
+
+    rect rgb(0, 0, 0)
+        note over Employee_A, EBW_QTSP: Phase 1: Corporate Dashboard and Service Selection
+
+        Employee_A -->> EBW_Issuer_B: Selects "IBAN-OV Attestation" service
+        Employee_A -->> EBW_Issuer_B: Selects the specific IBAN account
+    end
+
+    rect rgb(0, 0, 0)
+        note over Employee_A, EBW_QTSP: Phase 2: IBAN-OV Credential Issuance by QTSP
+
+        EBW_Issuer_B -->> EBW_Issuer_B: Retrieves IBAN-OV data<br/>from core banking system<br/>(acting as Authentic Source per ETSI 119 478)<br/>(IBAN, BIC, account holder, currency, status)<br/>Applies Seal over payload<br/>Stores hash & timestamp in audit log
+
+        EBW_Issuer_B -->> EBW_QTSP: Forwards signed IBAN-OV payload<br/>+ hash commitment for Seal signing
+
+        EBW_QTSP -->> EBW_QTSP: Verifies hash integrity<br/>Applies QESeal over full payload<br/>(incl. Primary Source Signature)
+
+        EBW_QTSP -->> EBW_QTSP: Creates QEAA + hash<br/>(dual seal: Seal from Bank + QESeal,<br/>SD-JWT-VC)
+
+        EBW_QTSP -->> EBW_Issuer_B: Returns QEAA + hash commitment
+
+        EBW_Issuer_B -->> EBW_Issuer_B: Verifies QEAA and hash integrity<br/>Logs issuance event<br/>(credential ID, dual seal reference)
+
+        EBW_Issuer_B -->> EBW_Company_A: Delivers IBAN-OV QEAA<br/>via Credential Endpoint (OID4VCI)
+
+        EBW_Company_A -->> EBW_Company_A: Validates & stores QEAA<br/>in Enterprise Wallet
+
+        EBW_Issuer_B -->> Employee_A: Displays success notification
+    end
 ```
