@@ -2,26 +2,78 @@
 
 MVP+ coverage
 
-## Scenario 1
-- Initiator - not registered in any registry (no EUCC)
-- min 2 Legal Representatives one  Legal Representative registered in EUCC and one Legal Representative with POA only 
-- min 2 UBOs: UBO 1 registered in transparency register and EUCC  and UBO 2 not registered in transparency register (“fictive UBO”)
-- UBO identification & verification (online,offline and videoident) 
-- UBO 1: offline onboarding (no EUDI wallet, POA + supporting evidence)
-- UBO 2: offline onboarding (no EUDI wallet, VideoIdent)
-- Support for cross-border onboarding with registration in the national register
-- The company operates as a branch in another country
 
-## Scenario 2
-- Default signing method: QES Minimum of 2 signatories required : one  Legal Representative and one person with POA
-Open point:
-- Assessment required whether QSeal alone is sufficient for contract signing (@Stephan to check )
+## General Use Case Assumptions
+- The scenario is executed across multiple steps involving multiple persons.
+- Cross-border is part of the scenario
+- The registration in the national register for special banks ( still in discussion)
+- The process concludes with:
+  - Issuance of the IBAN-OV QEAA into the Enterprise Business Wallet (EBW)
+  - SCA credentials issued to the acting person for future processes
+- Open point: Assessment required whether QSeal alone is sufficient for contract signing.
 
-## Scenario 3
-Open point:
-- Definition and detailed design of the onboarding process for authorized persons
-- The process is executed in 2 steps ( (@Ricky to fill in)
-- IBAN-OV issuance/attestation as QEAA
+## Company Perspective (Holder)
+- The initiator is not registered in any registry (no EUCC).
+- The MVP+ process involves multiple persons 
+  - Minimum 2 Legal Representatives:
+    - One Legal Representative registered in EUCC
+    - One Legal Representative with POA only
+  - Minimum 2 UBOs:
+    - UBO 1: registered in both transparency register and EUCC → offline onboarding (no EUDI wallet, POA + supporting evidence)
+    - UBO 2: not registered in transparency register ("fictive UBO") → offline onboarding (no EUDI wallet, VideoIdent)
+  - Minimum 2 persons from signatory rights: 
+    - Sign the contracts  
+    - Access the bank services (IBAN Issuing)
+- UBO identification & verification supports online, offline and VideoIdent methods (as reference)
+- The company operates as a branch in another country.
+- Default signing method: QES and minimum of 2 signatories required: one Legal Representative and one person from SignartoryRights with POA
+
+## Bank Perspective (Relying Party)
+- Company Onboarding 
+  - Cross-border onboarding without mandatory registrations in the national register will be supported.
+  - Onboarding of the sub-siadiary supported and requesting the share holder information from main company ( other country)
+  - Authorization of representatives and signatories will be supported. 
+  - UBO Verification supported ( online and offline)
+  - KYC Base sanctions screening will be supported High-risk client classification
+- Contract signing 
+  - support according to the company regstration information 
+  - support of person with SR and respective POA)
+  - open still under discussion — assessment required whether QSeal alone is sufficient for contract signing.
+- IBAN-OV Issuance 
+  - The IBAN issuance process is executed at a different point in time than the initiator onboarding process.
+  - support of triggering for a person who is not the initiator but is defined in the business rules under signatory rights and have the respectice poa 
+  - This person wil be onboarded by the bank and receives SCA for future (SCA) credentials for future processes.
+  - The person can select IBAN to be  issued as a EAA or QEAA
+  - Delivered will be directly into the Enterprise Business Wallet (EBW)
+
+## Person Perspective (EUDI Wallet)
+- The natural persons acting on behalf of the legal entity holds a valid EUDI Wallet containing a PID credential.
+- Multiple persons are involved in the process, each acting at different points in time:
+- Initiator (not registered in any registry)
+- Legal Representatives (min. 2)
+- UBOs (min. 2,minimum one with EUDI Wallet and one without EUDI wallet)
+- Person which will sign the contract 
+- Person which will access the bank service ( IBAN issuing )
+
+## Assumptions — Holder Business Wallet
+- The process involves multiple holders (initiator, legal representatives, UBOs) acting at different points in time.
+- Offline onboarding paths (no EUDI wallet) must be supported for:
+- Automatic Flow:
+ - Mutual authentication is enabled by default; no TLOL or device-binding checks are applied. 
+ - The company wallet is pre-authorized to both present and receive attestations; no additional configuration is supported in MVP+.
+ - The Business Wallet accepts credential offers automatically when an active corporate authorisation session is already established.
+- Manual Flow:
+ - Mutual authentication is reduced to a visual verification step.
+ - Authorization is reduced to a visual check and manual approval process.
+
+## Assumptions — Relying Party Business Wallet
+- Attestation verification for attestations will be limit to 
+  - for QEAA	
+    - Cryptographic validation (Section 4.2.1)
+    - Issuer identification against internal trusted list (Sections 4.2.2–4.2.3) or TLOL (based on Wallet Provider readniess) 
+  - for EAA 
+    - Cryptographic validation (Section 4.2.1)
+    - Basic issuer identification against internal trusted list (Sections 4.2.2–4.2.3)
 
 ## Pre-requisites
 This are the Pre-requisites for the company and bank in order to run the MVP.
