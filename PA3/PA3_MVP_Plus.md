@@ -294,7 +294,16 @@ sequenceDiagram
     Bank_Portal<<->>Bank_Wallet: verification of attestations rulebooks
 ```
 
-### 1.9. Cross-Check
+### 1.9. Use Case specific data (open business bank account)
+```mermaid
+sequenceDiagram
+    actor Initiator
+    activate Initiator
+    Initiator->>+Bank_Portal: fill specific data service specific 
+    Initiator->>+Bank_Portal: fill the "Expected turnover/Purpose business relationship"  
+```
+
+### 1.10. Cross-Check
 ```mermaid
 sequenceDiagram
     actor ContactPerson 
