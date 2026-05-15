@@ -2,7 +2,6 @@
 
 MVP+ coverage
 
-
 ## General Use Case Assumptions
 - The scenario is executed across multiple steps involving multiple persons.
 - Cross-border is part of the scenario
@@ -41,39 +40,44 @@ MVP+ coverage
   - open still under discussion — assessment required whether QSeal alone is sufficient for contract signing.
 - IBAN-OV Issuance 
   - The IBAN issuance process is executed at a different point in time than the initiator onboarding process.
-  - support of triggering for a person who is not the initiator but is defined in the business rules under signatory rights and have the respectice poa 
-  - This person wil be onboarded by the bank and receives SCA for future (SCA) credentials for future processes.
-  - The person can select IBAN to be  issued as a EAA or QEAA
-  - Delivered will be directly into the Enterprise Business Wallet (EBW)
+  - support of triggering for a person who is not the initiator but is defined in the business rules under signatory rights and have the respective poa 
+  - this person wil be onboarded by the bank and receives SCA credentials for future processes in banking portal (ex. iban, payment triggering)
+  - the person can select IBAN to be issued as a EAA or QEAA
+  - the SCA will be delivered into EUDI Wallet
+  - the IBAN delivered will be directly into the Enterprise Business Wallet (EBW)
 
 ## Person Perspective (EUDI Wallet)
-- The natural persons acting on behalf of the legal entity holds a valid EUDI Wallet containing a PID credential.
+- The persons acting on behalf of the legal entity holds a valid EUDI Wallet containing a PID credential.
 - Multiple persons are involved in the process, each acting at different points in time:
-- Initiator (not registered in any registry)
-- Legal Representatives (min. 2)
-- UBOs (min. 2,minimum one with EUDI Wallet and one without EUDI wallet)
-- Person which will sign the contract 
-- Person which will access the bank service ( IBAN issuing )
+  - The Initiator (not registered in any registry)
+  - Legal Representatives (min. 2)  (both registered in official national registry) 
+  - The Ultimate Beneficial Owners (min. 2)
+    - one UBO (register at least in  transparent register)
+    - one person acting in name of UBO (not register in any register - part of SignatoryRights list submitted to the bank)
+  - Persons which will sign the contract (part only of SignatoryRights list ) 
+  - Person which will access the bank service (part only of SignatoryRights list ) (ex IBAN issuing , Payment triggering, ..)
 
 ## Assumptions — Holder Business Wallet
 - The process involves multiple holders (initiator, legal representatives, UBOs) acting at different points in time.
 - Offline onboarding paths (no EUDI wallet) must be supported for:
+
 - Automatic Flow:
- - Mutual authentication is enabled by default; no TLOL or device-binding checks are applied. 
+ - Mutual authentication is enabled by default; no TLOL (4.2.4) or device-binding checks (4.2.8) are applied. 
  - The company wallet is pre-authorized to both present and receive attestations; no additional configuration is supported in MVP+.
  - The Business Wallet accepts credential offers automatically when an active corporate authorisation session is already established.
+
 - Manual Flow:
  - Mutual authentication is reduced to a visual verification step.
  - Authorization is reduced to a visual check and manual approval process.
 
 ## Assumptions — Relying Party Business Wallet
 - Attestation verification for attestations will be limit to 
-  - for QEAA	
-    - Cryptographic validation (Section 4.2.1)
-    - Issuer identification against internal trusted list (Sections 4.2.2–4.2.3) or TLOL (based on Wallet Provider readniess) 
-  - for EAA 
-    - Cryptographic validation (Section 4.2.1)
-    - Basic issuer identification against internal trusted list (Sections 4.2.2–4.2.3)
+  - Cryptographic validation (Section 4.2.1)
+  - Issuer verification (pubEAA/QEAA): against wallet internal list or WeBuild -TLOL (Sections 4.2.2–4.2.4)
+  - Issuer verification (EAA):  against wallet internal list or chaining approach described (Sections 4.2.2–4.2.4)
+  - Attestation verification (Section 4.2.5-4.2.6)
+  - Wallet related verification check (Section 4.2.7)
+ 
 
 ## Pre-requisites
 This are the Pre-requisites for the company and bank in order to run the MVP.
@@ -294,7 +298,7 @@ sequenceDiagram
     Bank_Portal<<->>Bank_Wallet: verification of attestations rulebooks
 ```
 
-### 1.9. Use Case specific data (open business bank account)
+### 1.9. Use Case specific data
 ```mermaid
 sequenceDiagram
     actor Initiator
