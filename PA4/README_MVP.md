@@ -53,15 +53,16 @@ Scope tells you what the MVP commits to delivering and, equally important, what 
 
 The table below introduces every participant who appears in the diagrams further down. Two distinctions matter: (a) **legal entities** (Seller, Buyer) act through wallets, while the **natural person** (Authorised Representative) acts through an EUDI Wallet; (b) **Bank** and **PSP** are the two payment rails: Bank handles IBAN, PSP handles card. Everything else is supporting infrastructure.
 
-| Actor / System    | Role                            | Wallet / Credentials held                                       |
-| ----------------- | ------------------------------- | --------------------------------------------------------------- |
-| Seller            | Holder of eInvoice              | Active EUBW with minimum attestations required for PA4          |
-| Buyer             | Relying Party / Payer           | Active EUBW with min attestations + Signatory Rights (SR) + PoA |
-| Authorised Representative   | Natural person acting for Buyer | EUDI Wallet with PID and SCA attestation                        |
-| Buyer Bank        | Buyer's home bank               | Bank Wallet linked to Buyer                                     |
-| PSP               | Card payment processor          | n/a                                                             |
-| Invoice Processor | eInvoice infrastructure         | n/a                                                             |
-| Business Register | Issuer of EUBWOID               | n/a                                                             |
+| Actor / System            | Role                             | Wallet / Credentials held                                       |
+|---------------------------|----------------------------------| --------------------------------------------------------------- |
+| Seller                    | Holder of eInvoice               | Active EUBW with minimum attestations required for PA4          |
+| Buyer                     | Relying Party / Payer            | Active EUBW with min attestations + Signatory Rights (SR) + PoA |
+| Authorised Representative | Natural person acting for Buyer  | EUDI Wallet with PID and SCA attestation                        |
+| Buyer Bank                | Buyer's home bank                | Bank Wallet linked to Buyer                                     |
+| Payment Processor         | Payment infrastructure (ex. SAP) | n/a                                                             |
+| PSP                       | Card payment processor           | n/a                                                             |
+| Invoice Processor         | eInvoice infrastructure          | n/a                                                             |
+| Business Register         | Issuer of EUBWOID                | n/a                                                             |
 
 ## 4. Glossary
 
@@ -148,79 +149,112 @@ Before the main workflow can start, each actor must already be provisioned with 
 - The Buyer is connected to a **Payment Processor** (its own internal system or an external PSP) so that card and IBAN payments can be initiated.
 
 ## 7. Inputs / Outputs / Triggers
-
 This section names the concrete artefacts that flow into and out of the workflow. The **trigger** is the event that kicks the flow off, the **inputs** are the credentials and data already in place when it starts, and the **outputs** are the persistent results that remain once it ends. If you are integrating PA4 with another system, this is your contract.
 
-- **Trigger**: eInvoice has been received in the buyer's Business Wallet (direct or indirect delivery).
+There are two different processes covered:
+- Deferred invoice: payment first → invoice & receipt afterwards
+- Upfront invoice: invoice first → payment → receipt afterwards
+
+The MVP and MVP+ cover the following constellations:
+- Deferred invoice with card payment
+- Upfront invoice with IBAN payment
+
+Note: Deferred invoice with IBAN payment and upfront invoice with card payment are not part of the MVP or MVP+.
+
+### 7.1 Deferred Invoice
+- **Trigger**: the seller request the payment 
 - **Inputs**:
-  - eInvoice (in Buyer's EUBW)
   - Buyer's SR and PoA attestations
   - Acting person's PID and SCA attestation in EUDI Wallet
 - **Outputs**:
-  - Settled payment (card or IBAN)
+  - Settled payment (card ) (or IBAN?)
+  - eReceipt attestation issued to Buyer's EUBW
+
+### 7.2 Upfront  Invoice
+- **Trigger**: eInvoice has been received in the buyer's Business Wallet (direct or indirect delivery).
+- **Inputs**:
+  - Buyer's SR and PoA attestations
+  - Acting person's PID and SCA attestation in EUDI Wallet
+- **Outputs**:
+  - Settled payment (IBAN) ( not or Card ?)
+  - eInvoice (in Buyer's EUBW)
   - eReceipt attestation issued to Buyer's EUBW
 
 ## 8. End-to-end Scenario
-
 This is the heart of the document. The flow is broken into six steps that always run in the same order: **(1) pick the legal entity → (2) initiate the payment → (3) authorise the person (SCA) → (4) authorise the legal entity (SR/PoA) → (5) settle → (6) issue the eReceipt.** Steps 2–4 each have branches depending on whether the payment is by card or by IBAN (and, for IBAN, whether it is a standard or high-value transaction). §8.1 shows everything at a glance; §8.2 to §8.7 zoom into each step with goal, branches, pre/post-conditions, and error paths.
 
-### 8.1 Overview
+The MVP and MVP+ cover the following constellations:
+- Deferred invoice with card payment
+- Upfront invoice with IBAN payment
 
 The diagram below is the single picture to remember. Read it top-to-bottom: the eInvoice arrives, the Authorised Representative starts the process at the Bank, and each subsequent block (Steps 1–6) lines up with one of the detail subsections that follow. `alt … else … end` blocks represent the card-vs-IBAN branches.
 
 ```mermaid
 sequenceDiagram
-box rgb(243,247,255) Seller
+box rgb(0,0,0) Seller
   participant Seller
+  participant SellerBank as Seller Bank
 end
-box rgb(255,247,238) Buyer
-  actor AuthRep as Authorised Representative
+box rgb(50,50,50) Buyer
+  actor AuthPerson as Authorised Person
   participant EUDI_Wallet
   participant Buyer
-  participant Bank as Buyer Bank
+  participant BuyerBank as Buyer Bank
 end
 participant PSP
 
-    note over Buyer : Buyer company receives an eInvoice<br/>in its Business Wallet<br/>(direct or indirect)
-
+    note over Seller, Bank  : Step 0: Triggering process 
+    alt **Deferred Invoice**
+        note over Seller  : The Merchant request the payment 
+        Seller <<->> Seller: present the code for payment         
+    else **Upfront  Invoice**     
+        note over Buyer : Buyer company receives an eInvoice<br/>in its Business Wallet<br/>(direct or indirect)
+        AuthPerson ->>+ Buyer : Select "Start Payment process" service
+    end 
+    
     note over Seller, Bank  : Step 1: Legal Entity Selection
-    AuthRep ->>+ Buyer : Select "Start Payment process" service
     Buyer ->> Buyer : Configure "legal entity" EUBW
-    Buyer -->>- AuthRep : Redirect to payments
+    Buyer -->>- AuthPerson : Redirect to payments
 
     note over Seller, PSP  : Step 2: Payment Initiation
     alt **Card-based payment**
-        AuthRep <<->> EUDI_Wallet : scan the code
+        AuthPerson <<->> EUDI_Wallet : scan the code
         EUDI_Wallet <<->> PSP : initiate the payment
     else **Account-based payment (IBAN)**
-        AuthRep <<->> Buyer : initiate the IBAN payment transfer
-        Buyer <<->> Bank : trigger payment filling with token
+        AuthPerson <<->> Buyer : initiate the IBAN payment transfer
+        Buyer <<->> BuyerBank : trigger payment filling with token
     end
 
     note over Seller, Bank  : Step 3: Payment Authorization
     alt Choice of "card payment"
         PSP <<->> EUDI_Wallet : request the SCA
-        AuthRep <<->> EUDI_Wallet : present the SCA
+        AuthPerson <<->> EUDI_Wallet : present the SCA
     else Choice of "IBAN payment - standard"
-        Bank <<->> Bank : token validity check
+        BuyerBank <<->> BuyerBank : token validity check
     end
 
     note over Seller, PSP  : Step 4: Legal Entity Payment Authorization
     alt Choice of "card payment"
         PSP <<->> Buyer : check Authorised Representative authorization (PoA, scope: card, limit: x)
-        PSP <<->> Bank : initiate the settlement
+        PSP <<->> BuyerBank : initiate the settlement
     else Choice of "IBAN payment - high tx"
-        Bank <<->> Buyer : check Authorised Representative authorization (SR, PoA, scope: tx, limit: x)
+        BuyerBank <<->> Buyer : check Authorised Representative authorization (SR, PoA, scope: tx, limit: x)
     else Choice of "IBAN payment - standard"
-        Bank <<->> Buyer : check the token authorization and initiate the settlement
+        BuyerBank <<->> Buyer : check the token authorization and initiate the settlement
     end
 
-    note over Seller, Bank  : Step 5: Payment Settlement
-    Bank <<->> Bank : payment settlement
-    Bank <<->> Buyer : payment / settlement confirmation
+    note over SellerBank, BuyerBank  : Step 5: Payment Settlement & Notification
+    BuyerBank <<->> SellerBank : payment settlement
+    BuyerBank <<->> Buyer : payment / settlement confirmation
+    SellerBank <<->> Seller : payment / settlement notication
 
-    note over Seller, Buyer : Step 6: eReceipt Issuing
-    Buyer <<->> Seller : eReceipt issuing (direct or indirect)
+    note over SellerBank, BuyerBank  : Step 6: Post Notification   
+    alt **Deferred Invoice**
+        Seller <<->> Buyer: send inovice 
+        Buyer <<->> Seller : eReceipt issuing (direct or indirect)
+    else **Upfront  Invoice**     
+        Buyer <<->> Seller : eReceipt issuing (direct or indirect)
+    end 
 ```
 
 ### 8.2 Step 1: Legal Entity Selection
