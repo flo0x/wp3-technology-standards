@@ -203,7 +203,7 @@ box rgb(50,50,50) Buyer
 end
 participant PSP
 
-    note over Seller, Bank  : Step 0: Triggering process 
+    note over Seller, BuyerBank  : Step 0: Triggering process 
     alt **Deferred Invoice**
         note over Seller  : The Merchant request the payment 
         Seller <<->> Seller: present the code for payment         
@@ -212,7 +212,7 @@ participant PSP
         AuthPerson ->>+ Buyer : Select "Start Payment process" service
     end 
     
-    note over Seller, Bank  : Step 1: Legal Entity Selection
+    note over Seller, BuyerBank  : Step 1: Legal Entity Selection
     Buyer ->> Buyer : Configure "legal entity" EUBW
     Buyer -->>- AuthPerson : Redirect to payments
 
@@ -225,7 +225,7 @@ participant PSP
         Buyer <<->> BuyerBank : trigger payment filling with token
     end
 
-    note over Seller, Bank  : Step 3: Payment Authorization
+    note over Seller, BuyerBank  : Step 3: Payment Authorization
     alt Choice of "card payment"
         PSP <<->> EUDI_Wallet : request the SCA
         AuthPerson <<->> EUDI_Wallet : present the SCA
