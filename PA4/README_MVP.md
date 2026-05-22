@@ -181,7 +181,17 @@ Note: Deferred invoice with IBAN payment and upfront invoice with card payment a
   - eReceipt attestation issued to Buyer's EUBW
 
 ## 8. End-to-end Scenario
-This is the heart of the document. The flow is broken into six steps that always run in the same order: **(1) pick the legal entity → (2) initiate the payment → (3) authorise the person (SCA) → (4) authorise the legal entity (SR/PoA) → (5) settle → (6) issue the eReceipt.** Steps 2–4 each have branches depending on whether the payment is by card or by IBAN (and, for IBAN, whether it is a standard or high-value transaction). §8.1 shows everything at a glance; §8.2 to §8.7 zoom into each step with goal, branches, pre/post-conditions, and error paths.
+This is the heart of the document. The flow is broken into six steps that always run in the same order: 
+* (1) pick the legal entity 
+* → (2) initiate the payment 
+* → (3) authorise the person (SCA) 
+* → (4) authorise the legal entity (SR/PoA) 
+* → (5) settle 
+* → (6) issue the eReceipt.
+
+Steps 2–4 each have branches depending on whether the payment is by card or by IBAN (and, for IBAN, whether it is a standard or high-value transaction). 
+- §8.1 shows everything at a glance; 
+- §8.2 to §8.7 zoom into each step with goal, branches, pre/post-conditions, and error paths.
 
 The MVP and MVP+ cover the following constellations:
 - Deferred invoice with card payment
@@ -226,20 +236,20 @@ participant PSP
     end
 
     note over Seller, BuyerBank  : Step 3: Payment Authorization
-    alt Choice of "card payment"
+    alt **Card-based payment**
         PSP <<->> EUDI_Wallet : request the SCA
         AuthPerson <<->> EUDI_Wallet : present the SCA
-    else Choice of "IBAN payment - standard"
+    else **Account-based payment (IBAN)**
         BuyerBank <<->> BuyerBank : token validity check
     end
 
     note over Seller, PSP  : Step 4: Legal Entity Payment Authorization
-    alt Choice of "card payment"
+    alt **Card-based payment**
         PSP <<->> Buyer : check Authorised Representative authorization (PoA, scope: card, limit: x)
         PSP <<->> BuyerBank : initiate the settlement
-    else Choice of "IBAN payment - high tx"
+    else **Account-based payment (IBAN) - high tx**
         BuyerBank <<->> Buyer : check Authorised Representative authorization (SR, PoA, scope: tx, limit: x)
-    else Choice of "IBAN payment - standard"
+    else **Account-based payment (IBAN) - standard**
         BuyerBank <<->> Buyer : check the token authorization and initiate the settlement
     end
 
