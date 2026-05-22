@@ -191,11 +191,11 @@ The diagram below is the single picture to remember. Read it top-to-bottom: the 
 
 ```mermaid
 sequenceDiagram
-box rgb(0,0,0) Seller
+box  Seller
   participant Seller
   participant SellerBank as Seller Bank
 end
-box rgb(50,50,50) Buyer
+box  Buyer
   actor AuthPerson as Authorised Person
   participant EUDI_Wallet
   participant Buyer
