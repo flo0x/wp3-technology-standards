@@ -214,12 +214,17 @@ end
 participant PSP
 
     note over Seller, BuyerBank  : Step 0: Triggering process 
+
     alt **Deferred Invoice**
+       rect rgb(220, 235, 255)
         note over Seller  : The Merchant request the payment 
-        Seller <<->> Seller: present the code for payment         
+        Seller <<->> Seller: present the code for payment  
+       end       
     else **Upfront  Invoice**     
+       rect rgb(220, 255, 220)
         note over Buyer : Buyer company receives an eInvoice<br/>in its Business Wallet<br/>(direct or indirect)
         AuthPerson ->>+ Buyer : Select "Start Payment process" service
+       end 
     end 
     
     note over Seller, BuyerBank  : Step 1: Legal Entity Selection
@@ -228,29 +233,43 @@ participant PSP
 
     note over Seller, PSP  : Step 2: Payment Initiation
     alt **Card-based payment**
+       rect rgb(220, 235, 255)
         AuthPerson <<->> EUDI_Wallet : scan the code
         EUDI_Wallet <<->> PSP : initiate the payment
+        end
     else **Account-based payment (IBAN)**
+       rect rgb(220, 255, 220)
         AuthPerson <<->> Buyer : initiate the IBAN payment transfer
         Buyer <<->> BuyerBank : trigger payment filling with token
+        end 
     end
 
     note over Seller, BuyerBank  : Step 3: Payment Authorization
     alt **Card-based payment**
-        PSP <<->> EUDI_Wallet : request the SCA
-        AuthPerson <<->> EUDI_Wallet : present the SCA
+        rect rgb(220, 235, 255)
+          PSP <<->> EUDI_Wallet : request the SCA
+          AuthPerson <<->> EUDI_Wallet : present the SCA
+        end 
     else **Account-based payment (IBAN)**
+       rect rgb(220, 255, 220)
         BuyerBank <<->> BuyerBank : token validity check
+        end 
     end
 
     note over Seller, PSP  : Step 4: Legal Entity Payment Authorization
     alt **Card-based payment**
+       rect rgb(220, 235, 255)
         PSP <<->> Buyer : check Authorised Representative authorization (PoA, scope: card, limit: x)
         PSP <<->> BuyerBank : initiate the settlement
+        end 
     else **Account-based payment (IBAN) - high tx**
+       rect rgb(220, 255, 220)
         BuyerBank <<->> Buyer : check Authorised Representative authorization (SR, PoA, scope: tx, limit: x)
+        end 
     else **Account-based payment (IBAN) - standard**
+       rect rgb(220, 255, 220)
         BuyerBank <<->> Buyer : check the token authorization and initiate the settlement
+        end 
     end
 
     note over SellerBank, BuyerBank  : Step 5: Payment Settlement & Notification
@@ -260,10 +279,15 @@ participant PSP
 
     note over SellerBank, BuyerBank  : Step 6: Post Notification   
     alt **Deferred Invoice**
+       rect rgb(220, 235, 255)
         Seller <<->> Buyer: send inovice 
         Buyer <<->> Seller : eReceipt issuing (direct or indirect)
-    else **Upfront  Invoice**     
+        end 
+    else **Upfront  Invoice**
+        rect rgb(220, 255, 220)
+     
         Buyer <<->> Seller : eReceipt issuing (direct or indirect)
+        end 
     end 
 ```
 
