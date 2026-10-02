@@ -103,6 +103,63 @@ sequenceDiagram
     Auth.Source ->> Company : issue TFS 
 ```
 
+
+## Overview workflow
+The following diagram provides an overview of the end-to-end process
+
+```mermaid
+sequenceDiagram
+    box Buyer
+        actor Initiator as Initiator
+        participant EUDI_Wallet as EUDI Wallet
+        participant HolderWallet as Business Wallet
+    end
+    box Seller
+        participant VerifComponent as Portal
+        participant VerifWallet as Business Wallet
+        participant VerifInternalSystem as Internal System
+    end
+        
+    %% ──────────────────────────────────────────────
+    %% STEP – Legal Entity Selection
+    %% ──────────────────────────────────────────────
+    note over Initiator, VerifWallet: Legal Entity Selection<br/>Choose business wallet connection method
+
+    %% ──────────────────────────────────────────────
+    %% STEP – Use-Case Specific Data Collection
+    %% ──────────────────────────────────────────────
+    note over Initiator, VerifWallet: Use-Case Specific Data Collection<br/>Manual input only — no attestations required
+
+    %% ──────────────────────────────────────────────
+    %% STEP – Legal Entity Identification
+    %% ──────────────────────────────────────────────
+    note over Initiator, VerifWallet: Legal Entity Identification<br/>Attestation Exchange: EUCC · TAX · VAT · CompanyInfo · ContactPerson
+
+    %% ──────────────────────────────────────────────
+    %% STEP – Organisation Structure
+    %% ──────────────────────────────────────────────
+    note over Initiator, VerifWallet: Direct Organisation Structure<br/>Attestation Exchange: Ownership · Control
+
+    rect rgb(220, 255, 220)
+        note over  Initiator, VerifWallet: MVP+ steps  
+        %% ──────────────────────────────────────────────
+        %% STEP – Additional Identifiers 
+        %% ──────────────────────────────────────────────
+        note over Initiator, VerifWallet: Additional Identifiers<br/>Attestation Exchange: LEI
+        
+        %% ──────────────────────────────────────────────
+        %% STEP – Base Sanctions Screening
+        %% ──────────────────────────────────────────────
+        note over Initiator, VerifWallet: BaseSanctions Screening<br/>Attestation Exchange: TFS
+    
+    end 
+    
+    %% ──────────────────────────────────────────────
+    %% STEP – Cross-Check & Internal Transfer
+    %% ──────────────────────────────────────────────
+    note over Initiator, VerifInternalSystem: Cross-Check & Transfer to Internal Systems<br/>Validate all collected data, transfer to  internal systems    
+```
+
 ### 1. Scenario 1
 
 ### 1.1. Legal Entity Selection
